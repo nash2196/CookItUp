@@ -1,0 +1,11 @@
+{
+  "name": "cookitup",
+  "version": "1.0.0",
+  "description": "Cook It Up project folder",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "NNN@14",
+  "license": "ISC"
+}
