@@ -1,17 +1,29 @@
 <html>
 <head><title>Cook It Up</title>
 <link rel="stylesheet" type="text/css" href="css/style.css">
+
 </head>
 <body>
-<div class="header-bar">Cook It Up</div>
+<div class="header-bar"><a href="front_page.html" style="color:white; text-decoration:none">Cook It Up</a></div>&nbsp;
+
 <center>
+<img src="img/login.png" width="100px" height="100px"></img>
+<form action="" name="login">
 
-  <form name="login" action="">
-  Email: <input type="email" id="id"><br/><br/>
-  Password: <input type="password" id="pwd"><br/><br/>
-  <button onclick="" class="search">Login</button>
+  <div class="container">
+    <label>Username:</label>
+    <input type="text" placeholder="Enter Username" name="uname" required></br></br>
+
+    <label>Password:</label>
+   &nbsp;<input type="password" placeholder="Enter Password" name="psw" required></br></br>
+
+    <button type="submit" class="body-btn">Login</button></br></br>
+    <input type="checkbox"> Remember me
+  </div>
+    <span class="psw">Forgot <a href="#">password?</a></span>
+
 </form>
-
 </center>
+
 </body>
 </html>

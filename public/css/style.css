@@ -2,58 +2,91 @@ div.header-bar {
     display: block;
     color: white;
     background-color: black;
-    text-align: center;
-    padding: 14px 16px;
+    text-align:justified;
+    padding: 25px 16px;
     font-size: 36px;
     text-decoration: none;
-    font-family: Palatino}
+    font-family: Palatino;
 
-input button.header-bar,button.header-bar {
-    position: right;
+}
+
+ button.header-bar {
+    float:right;
     border-right: 1px solid #bbb;
-    background-color: #4CAF50;
-    border: none;
-    color: white;
+    background-color: white;
+    border: 1px solid black;
+    color: black;
     padding: 15px 32px;
+    margin: 1px 20px 30px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    border-radius: 25px;
-    font-size: 16px;}
+    border-radius: 8px;
+    font-size: 14px;
+     cursor: pointer;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+button.header-bar:hover {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
 
 .floatleft {
-        font-size: 24px;
+        font-size: 20px;
         float:left;
         width: 30%;
-        height: 100%;
-        background-color: 696969;
+
+        background-color: rgb(240,240,240);
     }
+.floatleft,p{
+        font-size: 32px;
+        text-align:center;
+        font-style: bold;
+}
+
 
 .floatright {
-    float: right;
+        float: right;
         background-color: white;
         width: 70%;
         height: 100%;
         font-size: 24px;
-    }
-button.search{
-  position:right;
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 10px 18px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 12px;
-  border-radius: 25px;
+        font-family: Palatino;
 }
+
+.floatright,label{
+        font-size: 24px;
+        }
+
+button.search{
+
+  background-color: white;
+   border: 1px solid black;
+    color: black;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 8px;
+    font-size: 12px;
+     cursor: pointer;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+button.search:hover {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
 
 form{
   text-align: center;
   margin-top: 30px;
   font-size: 24px;
   font-family: Times;
+
 }
 form button{
   position:right;
@@ -67,3 +100,38 @@ form button{
   font-size: 24px;
   border-radius: 25px;
 }
+
+.body-btn{
+    background-color:white;
+    color:black;
+    font-size:12px;
+    padding:15px 32px;
+    text-align:center;
+    border-radius:8px;
+    display:inline-block;
+    border:1px solid black;
+    cursor: pointer;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+.body-btn:hover {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+
+
+.user{
+    float:right;
+}
+
+.left-pane{
+    font-size:20px;
+    color:black;
+    background-color:rgb(240,240,240);
+    font-family:Times New Roman;
+    float:left;
+    display:inline-block;
+}
+    

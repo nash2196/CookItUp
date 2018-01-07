@@ -1,15 +1,26 @@
 <html>
 <head><title>Cook It Up</title>
 <link rel="stylesheet" type="text/css" href="css/style.css">
+
 </head>
 <body>
-<div class="header-bar">Cook It Up</div>
+
+<div class="header-bar"><a href="front_page.html" style="color:white; text-decoration:none">Cook It Up</a></div>&nbsp;
+<center>
+<img src="img/signup.png" width="100px" height="100px"></img>
+<div class="signup-form">
 <form name="signup" action="">
-  Enter your email id: <input type="email" id="id"/><br/><br/>
-  Enter your name: <input type="text" id="name"/><br/><br/>
-  Enter password: <input type="password" id="pwd"/><br/><br/>
-  Confirm password: <input type="password" id="confirmpwd"/><br/><br/>
-  <button class="body_button">Log in</button>
+  <label>Enter your email id:</label>
+  <input type="email" id="id" placeholder="Enter your email-id" required><br/><br/>
+  <label>Enter your name:&nbsp;&nbsp;&ensp;  </label>
+  <input type="text" id="name" placeholder="Enter your name" required><br/><br/>
+  <label>Enter password:&ensp;&ensp;&nbsp;     </label>
+ &nbsp; <input type="password" id="pwd" placeholder="Enter password" required><br/><br/>
+  <label>Confirm password:   </label>
+  &nbsp;&nbsp;<input type="password" id="confirmpwd" placeholder="Re-write your password" required><br/><br/>
+  <button class="body-btn">Log in</button>
 </form>
+</center>
+
 </body>
 </html>

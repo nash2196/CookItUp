@@ -1,49 +1,57 @@
-<html ng-app = 'MainApp'>
+<!DOCTYPE html>
+<html ng-app = 'MainApp' lang='en'>
 <head>
   <title>Cook It Up</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" type="text/css" href="css/style.css">
+
+
 </head>
 <body>
+
   <script type = "text/javascript" src="js/angular/angular.min.js"></script>
   <script type="text/javascript" src="js/app.js"></script>
-<div class="header-bar" >Cook It Up
+
+<div class="header-bar" >
+    <a href="front_page.html" style="color:white; text-decoration:none">Cook It Up</a>
     <a href="login_page.html">
     <button class="header-bar" >Login</button></a>
+
     <a href="signup_page.html">
       <button class="header-bar">Sign Up</button></a>
 </div>
-
-
 <div style="width:100%">
   <div class="floatleft">
   <form ng-controller = "IngrController as ingrCtrl" ng-submit = "ingrCtrl.final()">
-    <label>Select your ingredients</label>
+    <p>Select your ingredients</p>
     <details ng-repeat = "type in ingrCtrl.types">
       <summary align="left">{{type.name}}</summary>
       <label ng-repeat = "option in type.options">
         <input type="checkbox" name = "selectIngr" value="{{option}}" ng-click="ingrCtrl.checkIngr(option)"/>{{option}}
       </label>
     </details>
-    <centre><button class="header-bar" >Search</button></centre>
+    <center><button class="header-bar" >Search</button></center>
 
   </form>
 </div>
 
 
+
   <div class="floatright">
     <form ng-controller = "MealController as mealCtrl" ng-submit="mealCtrl.clickedMeal(meal_model,cuisine_model)">
       <label>Select meal type:</label>
+
       <Select ng-model="meal_model" ng-options = "type for type in mealCtrl.meal">
-        <option value="">--Select Meal Type--</option>
-    </Select>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        <option value="" >--Select Meal Type--</option>
+    </Select>&ensp;&ensp;&ensp;&ensp;
 
       <label>Select cuisine type:</label>
       <Select ng-model="cuisine_model"  ng-options = "type for type in mealCtrl.cuisine">
-        <option value="">-- Select Cuisine Type --</option>
-      </Select>&ensp;&ensp;&nbsp;
+        <option value="" > -- Select Cuisine Type --></option>
+      </Select>&ensp;
+&ensp;
    <button class="search">Search</button>
  </form>
 </div>
-
 </body>
 </html>
