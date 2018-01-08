@@ -20,7 +20,7 @@
 </div>
 <div style="width:100%">
   <div class="floatleft">
-  <form ng-controller = "IngrController as ingrCtrl" ng-submit = "ingrCtrl.final()">
+  <form name = "ingrForm" ng-controller = "IngrController as ingrCtrl" ng-submit = "ingrCtrl.final()">
     <p>Select your ingredients</p>
     <details ng-repeat = "type in ingrCtrl.types">
       <summary align="left">{{type.name}}</summary>
@@ -36,20 +36,32 @@
 
 
   <div class="floatright">
-    <form ng-controller = "MealController as mealCtrl" ng-submit="mealCtrl.clickedMeal(meal_model,cuisine_model)">
+    <form name = "mealForm" ng-controller = "MealController as mealCtrl"
+                            ng-submit="mealCtrl.clickedMeal(meal_model,cuisine_model)">
       <label>Select meal type:</label>
 
-      <Select ng-model="meal_model" ng-options = "type for type in mealCtrl.meal">
+      <Select ng-model="meal_model" ng-options = "type for type in mealCtrl.meal" >
         <option value="" >--Select Meal Type--</option>
     </Select>&ensp;&ensp;&ensp;&ensp;
 
       <label>Select cuisine type:</label>
-      <Select ng-model="cuisine_model"  ng-options = "type for type in mealCtrl.cuisine">
+      <Select ng-model="cuisine_model"  ng-options = "type for type in mealCtrl.cuisine" >
         <option value="" > -- Select Cuisine Type --></option>
       </Select>&ensp;
 &ensp;
    <button class="search">Search</button>
  </form>
-</div>
+
+      <section ng-controller = "RecipeController as recipeCtrl">
+        <button class="search" ng-click = "recipeCtrl.showRecipe()">Show Recipe</button>
+        <div ng-repeat = "recipe in recipeCtrl.selectedRecipe">
+          <img class = "recipe" ng-src = "img/{{recipe.images[0]}}"/>
+          <p>Name: {{recipe.name}}</p>
+          <p>Uploaded by: {{recipe.author}}</p>
+          <p>Likes:{{recipe.likes}}</p>
+        </div>
+      </section>
+
+  </div>
 </body>
 </html>

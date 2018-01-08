@@ -40,7 +40,7 @@ button.header-bar:hover {
 
         background-color: rgb(240,240,240);
     }
-.floatleft,p{
+.floatleft.p{
         font-size: 32px;
         text-align:center;
         font-style: bold;
@@ -56,10 +56,18 @@ button.header-bar:hover {
         font-family: Palatino;
 }
 
-.floatright,label{
+.floatright.label{
         font-size: 24px;
-        }
+}
 
+.floatright.p{
+        font-size: 16px;
+}
+
+img.recipe{
+      float: left;
+      margin-right: 5px; 
+}
 button.search{
 
   background-color: white;
@@ -134,4 +142,3 @@ form button{
     float:left;
     display:inline-block;
 }
-    

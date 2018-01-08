@@ -1,0 +1,8 @@
+<section>
+  <div ng-repeat = "recipe in RecipeCtrl">
+    <img ng-src = "img/{{recipe.images[0]}}"/>
+    <label>{{recipe.name}}</label>
+    <label>{{recipe.author}}</label>
+    <label>Likes:{{recipe.likes}}</label>
+  </div>
+</section>
