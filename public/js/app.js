@@ -1,69 +1,126 @@
 var app = angular.module('MainApp',[]);
 
-app.service('ingrService',function(){
+app.service('valueService',function(){
     var selectedIngr = [];
+    var selectedMeal = '';
+    var selectedCuisine = '';
 
+    //ingredients selected
     var addIngr = function(ingr){
       selectedIngr.push(ingr);
     };
-
     var getIngr = function(){
       return selectedIngr;
     };
 
+    //meal type selected
+    var addMeal = function(meal_type){
+      selectedMeal = meal_type;
+    };
+    var getMeal = function(){
+      return selectedMeal;
+    };
+
+    //cuisine type selected
+    var addCuisine = function(cuisine_type){
+      selectedCuisine = cuisine_type;
+    };
+    var getCuisine = function(){
+      return selectedCuisine;
+    };
+
+
     return {
       addIngr: addIngr,
-      getIngr: getIngr
+      getIngr: getIngr,
+      addMeal: addMeal,
+      getMeal: getMeal,
+      addCuisine: addCuisine,
+      getCuisine: getCuisine
     };
 });
 
 
-app.controller('IngrController', function($http, ingrService) {
+app.controller('IngrController', function($http, valueService) {
       $http.get('/types').then((response) => {
       this.types = response.data;
       });
 
       this.checkIngr = function(option){
         var ingr = JSON.stringify(option);
-        var idx = ingrService.getIngr().indexOf(ingr);
+        var idx = valueService.getIngr().indexOf(ingr);
         if(idx>-1){
-          ingrService.getIngr().splice(idx,1);
+          valueService.getIngr().splice(idx,1);
         } else{
-          ingrService.addIngr(ingr);
+          valueService.addIngr(ingr);
         }
       };
 
       this.final = function(){
-        console.log(ingrService.getIngr());
+        console.log(valueService.getIngr());
       }
 });
 
 
-app.controller('MealController',function($http){
+app.controller('MealController',function($http, valueService){
 
+      //retrieve meal types and cuisine types
       $http.get('/meals').then((response) => {
         this.meal = response.data.meals;
         this.cuisine = response.data.cuisines;
       });
 
-      var selectedMeal = selectedCuisine = '';
 
       this.clickedMeal = function(m,c){
-        selectedMeal = JSON.stringify(m);
-        selectedCuisine = JSON.stringify(c);
-        console.log(selectedMeal,selectedCuisine);
+        valueService.addMeal(JSON.stringify(m));
+        valueService.addCuisine(JSON.stringify(c));
+        //console.log(valueService.getMeal(),valueService.getCuisine());
       };
 });
 
 
-app.controller('RecipeController',function(ingrService){
+app.controller('RecipeController',function(valueService){
 
   this.recipes = recipes;
   this.selectedRecipe = [];
-  var ingredients = ingrService.getIngr();
+  var ingredients = valueService.getIngr();
+
   this.showRecipe = function(){
     console.log(ingredients);
-    if(ingredients==[]){
+
+    if(ingredients.length==0){
+        var meal = valueService.getMeal();
+        var cuisine = valueService.getCuisine();
+        //console.log("From showRecipe ",meal," ",cuisine);
+
+        //if user selects both meal and cuisine type
+        if((meal !== undefined) && (cuisine !== undefined)) {
+
+          for(var i=0;i<this.recipes.length;i++){
+            if(JSON.stringify(this.recipes[i].meal_type)===meal && JSON.stringify(this.recipes[i].cuisine_type)===cuisine){
+              this.selectedRecipe.push(this.recipes[i]);
+              console.log(this.selectedRecipe);
+            };//end if
+          }; //end for loop
+
+        //if user selects only cuisine
+      }else if(meal === undefined && cuisine!==undefined){
+
+          for(var i=0;i<this.recipes.length;i++){
+            if(JSON.stringify(this.recipes[i].cuisine_type)===cuisine){
+              this.selectedRecipe.push(this.recipes[i]);
+            }//end if
+          }; //end for loop
+
+        //if user selects only meal
+      }else if(meal!== undefined && cuisine===undefined){
+
+          for(var i=0;i<this.recipes.length;i++){
+            if(JSON.stringify(this.recipes[i].meal_type)===meal){
+              this.selectedRecipe.push(this.recipes[i]);
+            }//end if
+          }; //end for loop
+        };
 
     }else {
       loop1:
@@ -80,12 +137,13 @@ app.controller('RecipeController',function(ingrService){
               this.selectedRecipe.push(this.recipes[j]);
               console.log(this.selectedRecipe[0]);
               break loop1;
-            };
-          };
-        };
-      };
+            };//end if
+          };//end loop3
+        };//end loop2
+      };//end loop1
 
     }
+    // this.selectedRecipe.length=0;
   };
 
 
@@ -95,7 +153,7 @@ app.controller('RecipeController',function(ingrService){
 
 var recipes = [
   {
-    name: "Onion Tomato",
+    name: "Onion Tomato Curry",
     ingredients: ["Onion","Tomato"],
     images: ["recipe1-img1.jpeg","recipe1-img2.jpeg"],
     meal_type: "Lunch",
@@ -105,7 +163,7 @@ var recipes = [
   },
 
   {
-    name: "Milk Banana",
+    name: "Banana Shake",
     ingredients: ["Milk","Banana"],
     images: ["recipe2-img1.jpeg","recipe2-img2.jpeg"],
     meal_type: "Breakfast",
