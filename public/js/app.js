@@ -1,32 +1,32 @@
 var app = angular.module('MainApp',[]);
 
 app.service('valueService',function(){
-    var selectedIngr = [];
-    var selectedMeal = '';
-    var selectedCuisine = '';
+    this.selectedIngr = [];
+    this.selectedMeal = '';
+    this.selectedCuisine = '';
 
     //ingredients selected
-    var addIngr = function(ingr){
-      selectedIngr.push(ingr);
+    var addIngr = (ingr) => {
+      this.selectedIngr.push(ingr);
     };
-    var getIngr = function(){
-      return selectedIngr;
+    var getIngr = () => {
+      return this.selectedIngr;
     };
 
     //meal type selected
-    var addMeal = function(meal_type){
-      selectedMeal = meal_type;
+    var addMeal = (meal_type) => {
+      this.selectedMeal = meal_type;
     };
-    var getMeal = function(){
-      return selectedMeal;
+    var getMeal = () => {
+      return this.selectedMeal;
     };
 
     //cuisine type selected
-    var addCuisine = function(cuisine_type){
-      selectedCuisine = cuisine_type;
+    var addCuisine = (cuisine_type) => {
+      this.selectedCuisine = cuisine_type;
     };
-    var getCuisine = function(){
-      return selectedCuisine;
+    var getCuisine = () => {
+      return this.selectedCuisine;
     };
 
 
@@ -83,12 +83,13 @@ app.controller('RecipeController',function(valueService){
 
   this.recipes = recipes;
   this.selectedRecipe = [];
-  var ingredients = valueService.getIngr();
+  this.ingredients = valueService.getIngr();
 
-  this.showRecipe = function(){
-    console.log(ingredients);
+  this.showRecipe = () => {
+    this.selectedRecipe = [];
+    console.log(this.ingredients);
 
-    if(ingredients.length==0){
+    if(this.ingredients.length==0){
         var meal = valueService.getMeal();
         var cuisine = valueService.getCuisine();
         //console.log("From showRecipe ",meal," ",cuisine);
@@ -124,8 +125,8 @@ app.controller('RecipeController',function(valueService){
 
     }else {
       loop1:
-      for (var i=0;i<ingredients.length;i++){
-        var ingr = ingredients[i];
+      for (var i=0;i<this.ingredients.length;i++){
+        var ingr = this.ingredients[i];
         // console.log("search param: ",ingr);
       loop2:
         for(var j=0;j<this.recipes.length;j++){
@@ -135,7 +136,7 @@ app.controller('RecipeController',function(valueService){
             // console.log("recipe ingr param: ",recipe_ingr);
             if(ingr==recipe_ingr){
               this.selectedRecipe.push(this.recipes[j]);
-              console.log(this.selectedRecipe[0]);
+              console.log(this.selectedRecipe);
               break loop1;
             };//end if
           };//end loop3
@@ -143,7 +144,7 @@ app.controller('RecipeController',function(valueService){
       };//end loop1
 
     }
-    // this.selectedRecipe.length=0;
+
   };
 
 
