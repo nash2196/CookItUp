@@ -134,10 +134,10 @@ app.controller('RecipeController',function(valueService){
           for(var k=0;k<this.recipes[j].ingredients.length;k++){
             var recipe_ingr = JSON.stringify(this.recipes[j].ingredients[k]);
             // console.log("recipe ingr param: ",recipe_ingr);
-            if(ingr==recipe_ingr){
+
+            if(ingr==recipe_ingr && this.selectedRecipe.indexOf(this.recipes[j])<0){
               this.selectedRecipe.push(this.recipes[j]);
               console.log(this.selectedRecipe);
-              break loop1;
             };//end if
           };//end loop3
         };//end loop2
@@ -154,6 +154,7 @@ app.controller('RecipeController',function(valueService){
 
 var recipes = [
   {
+    id: "OTC",
     name: "Onion Tomato Curry",
     ingredients: ["Onion","Tomato"],
     images: ["recipe1-img1.jpeg","recipe1-img2.jpeg"],
@@ -164,6 +165,7 @@ var recipes = [
   },
 
   {
+    id: "BS",
     name: "Banana Shake",
     ingredients: ["Milk","Banana"],
     images: ["recipe2-img1.jpeg","recipe2-img2.jpeg"],
