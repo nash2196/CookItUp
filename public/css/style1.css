@@ -1,0 +1,79 @@
+div.header-bar {
+    display: block;
+    color: white;
+    background-color: black;
+    text-align:justified;
+    padding: 25px 16px;
+    font-size: 36px;
+    text-decoration: none;
+    font-family: Palatino;
+
+}
+
+* {
+    box-sizing: border-box;
+}
+
+input[type=password],input[type=time],input[type=number],input[type=text], select, textarea{
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    resize: vertical;
+}
+
+label {
+    padding: 12px 12px 12px 0;
+    display: inline-block;
+    font-size:20px;
+}
+
+input[type=submit] {
+   background-color:white;
+    color:black;
+    font-size:12px;
+    padding:15px 32px;
+    text-align:center;
+    border-radius:8px;
+    display:inline-block;
+    border:1px solid black;
+    cursor: pointer;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+}
+
+input[type=submit]:hover {
+     background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+.container {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+
+#ck-button {
+    margin:4px;
+    background-color:#EFEFEF;
+    border-radius:4px;
+    border:1px solid #D0D0D0;
+    overflow:auto;
+    float:left;
+}
+
+form .progress {
+    line-height: 15px;
+}
+
+.progress {
+    display: inline-block;
+    width: 100px;
+    border: 3px groove #CCC;
+}
+
+.progress div {
+    font-size: smaller;
+    background: orange;
+    width: 0;
+}

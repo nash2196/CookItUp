@@ -1,4 +1,4 @@
-var app = angular.module('MainApp',[]);
+var app = angular.module('MainApp',['ngFileUpload']);
 
 app.service('valueService',function(){
     this.selectedIngr = [];
@@ -147,9 +147,25 @@ app.controller('RecipeController',function(valueService){
 
   };
 
-
-
 });
+
+app.controller('MediaController', ['Upload', function(Upload){
+
+  this.uploadPic = (file) => {
+    file.upload = Upload.upload({
+      url: '/upload/pic',
+      data: {file: file}
+    }).then((response) => {
+          file.result = response.data;
+    }, (response) => {
+      if (response.status > 0){
+        this.errorMsg = response.status + ': ' + response.data;
+      }
+    }, (evt) => {
+      file.progress = parseInt(100.0 * evt.loaded / evt.total);
+    });
+  };
+}]);
 
 
 var recipes = [
@@ -161,7 +177,7 @@ var recipes = [
     meal_type: "Lunch",
     cuisine_type: "Indian",
     author: "Aditya Patel",
-    likes: 0
+    likes: 10
   },
 
   {
