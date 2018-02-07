@@ -30,7 +30,7 @@
     Your browser does not support HTML5 video.
 </video></br></br>
 
-  <label>Upload Photo:</label>&ensp;<input type='file' ng-model="pic" name="file" ngf-select ngf-accept="'image/*'">
+  <label for="pic">Upload Photo:</label>&ensp;<input type='file' ng-model="pic" name="pic" ngf-select ngf-accept="'image/*'">
   <button ng-click="mediaCtrl.uploadPic(pic)">Upload</button>
   <span class="progress" ng-show="!mediaCtrl.errorMsg && pic.progress >= 0">
         <div style="width:{{pic.progress}}%" ng-bind="pic.progress + '%'"></div>
@@ -40,14 +40,14 @@
   <span ng-show="mediaCtrl.errorMsg">OOPS! {{mediaCtrl.errorMsg}}</span>
 
 
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<label>Upload Video:</label>&ensp;<input type="file" ng-model="video" ngf-select ngf-accept="'video/*'">
-<button ng-click="mediaCtrl.uploadPic(video)">Upload</button>
-<span class="progress" ng-show="!mediaCtrl.errorMsg && video.progress >= 0">
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<label for="video">Upload Video:</label>&ensp;<input type="file" name="video" ng-model="video" ngf-select ngf-accept="'video/*'">
+  <button ng-click="mediaCtrl.uploadPic(video)">Upload</button>
+    <span class="progress" ng-show="!mediaCtrl.errorMsg && video.progress >= 0">
       <div style="width:{{video.progress}}%" ng-bind="video.progress + '%'"></div>
-</span>
+    </span>
 
-<span ng-show="video.result">Done!</span>
-<span ng-show="mediaCtrl.errorMsg">OOPS! {{mediaCtrl.errorMsg}}</span>
+    <span ng-show="video.result">Done!</span>
+    <span ng-show="mediaCtrl.errorMsg">OOPS! {{mediaCtrl.errorMsg}}</span>
 
 </span>
 <!-- <script>
@@ -72,7 +72,7 @@ function readURL(input) {
         $source.parent()[0].load();
         });
 </script> -->
-<form ng-controller = "IngrController as ingrCtrl" ng-submit = "ingrCtrl.final()">
+<span ng-controller = "IngrController as ingrCtrl">
      <label>Recipe Name:</label>
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="text" name="Recipe Name" placeholder="Enter the name of the recipe" required></br><br>
      <label>Ingredients Required:</label>
@@ -86,29 +86,31 @@ function readURL(input) {
            <input type="checkbox" name = "selectIngr" value="{{option}}" ng-click="ingrCtrl.checkIngr(option)"/>{{option}}
          </label>
        </details>
-       <center><button class="header-bar" >Search</button></center>
+       <!-- <center><button class="header-bar" >Search</button></center> -->
        <hr>
      <!-- </form> -->
-     <label>Method:</label>
+     <label for = "Method">Method:</label>
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="text" cols="50" rows="10" style="width:200px; height:50px;" name="Method" required/></br></br>
-     <label>Time Required:</label>
+     <label for="time">Time Required:</label>
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="time" name="time"></br></br>
-     <label>Serve:</label>
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="number" placeholder="Enter no. of serving" name="serve">
-     &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<label>Taste:</label>
+     <label for="serve">Serve:</label>
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="number" placeholder="Enter no. of serving" name="serve" min="1">
+     &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<label for="taste">Taste:</label>
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="text" name="taste" placeholder="Level of Taste eg:mild/spicy,etc."></br></br>
-</form>
-<form ng-controller = "MealController as mealCtrl" ng-submit="mealCtrl.clickedMeal(meal_model,cuisine_model)">
+</span>
+<span ng-controller = "MealController as mealCtrl">
      <label>Select meal type:</label>
-&ensp;&ensp;&ensp;&ensp;<Select ng-model="meal_model" ng-options = "type for type in mealCtrl.meal">
+&ensp;&ensp;&ensp;&ensp;<Select ng-model="meal_model" ng-options = "type for type in mealCtrl.meal" ng-change="mealCtrl.selectMeal(meal_model)">
         <option value="" >--Select Meal Type--</option>
     </Select>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
       <label>Select cuisine type:</label>
-&ensp;&ensp;<Select ng-model="cuisine_model"  ng-options = "type for type in mealCtrl.cuisine">
+&ensp;&ensp;<Select ng-model="cuisine_model"  ng-options = "type for type in mealCtrl.cuisine" ng-change="mealCtrl.selectCuisine(cuisine_model)">
         <option value="" > -- Select Cuisine Type --></option>
       </Select></br></br></br>
-<center><input type="submit" name="button" value="Add"></center>
-</form>
+      <center><input type="submit" name="button" value="Add"></center>
+</span>
+
+
 </div>
 </body>
 </html>

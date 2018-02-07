@@ -2,8 +2,8 @@ var app = angular.module('MainApp',['ngFileUpload']);
 
 app.service('valueService',function(){
     this.selectedIngr = [];
-    this.selectedMeal = '';
-    this.selectedCuisine = '';
+    this.selectedMeal = null;
+    this.selectedCuisine = null;
 
     //ingredients selected
     var addIngr = (ingr) => {
@@ -56,9 +56,9 @@ app.controller('IngrController', function($http, valueService) {
         }
       };
 
-      this.final = function(){
-        console.log(valueService.getIngr());
-      }
+      // this.final = function(){
+      //   console.log(valueService.getIngr());
+      // }
 });
 
 
@@ -71,10 +71,14 @@ app.controller('MealController',function($http, valueService){
       });
 
 
-      this.clickedMeal = function(m,c){
-        valueService.addMeal(JSON.stringify(m));
-        valueService.addCuisine(JSON.stringify(c));
-        //console.log(valueService.getMeal(),valueService.getCuisine());
+      this.selectMeal = function(m){
+        valueService.addMeal(m);
+        console.log(valueService.getMeal(),valueService.getCuisine());
+      };
+
+      this.selectCuisine = function(c){
+        valueService.addCuisine(c);
+        console.log(valueService.getMeal(),valueService.getCuisine());
       };
 });
 
@@ -95,29 +99,29 @@ app.controller('RecipeController',function(valueService){
         //console.log("From showRecipe ",meal," ",cuisine);
 
         //if user selects both meal and cuisine type
-        if((meal !== undefined) && (cuisine !== undefined)) {
+        if((meal !== null) && (cuisine !== null)) {
 
           for(var i=0;i<this.recipes.length;i++){
-            if(JSON.stringify(this.recipes[i].meal_type)===meal && JSON.stringify(this.recipes[i].cuisine_type)===cuisine){
+            if(this.recipes[i].meal_type===meal && this.recipes[i].cuisine_type===cuisine){
               this.selectedRecipe.push(this.recipes[i]);
               console.log(this.selectedRecipe);
             };//end if
           }; //end for loop
 
         //if user selects only cuisine
-      }else if(meal === undefined && cuisine!==undefined){
+      }else if(meal === null && cuisine !== null){
 
           for(var i=0;i<this.recipes.length;i++){
-            if(JSON.stringify(this.recipes[i].cuisine_type)===cuisine){
+            if(this.recipes[i].cuisine_type===cuisine){
               this.selectedRecipe.push(this.recipes[i]);
             }//end if
           }; //end for loop
 
         //if user selects only meal
-      }else if(meal!== undefined && cuisine===undefined){
+      }else if(meal !== null && cuisine === null){
 
           for(var i=0;i<this.recipes.length;i++){
-            if(JSON.stringify(this.recipes[i].meal_type)===meal){
+            if(this.recipes[i].meal_type===meal){
               this.selectedRecipe.push(this.recipes[i]);
             }//end if
           }; //end for loop

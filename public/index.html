@@ -22,7 +22,7 @@
 </div>
 <div style="width:100%">
   <div class="floatleft">
-  <form name = "ingrForm" ng-controller = "IngrController as ingrCtrl" ng-submit = "ingrCtrl.final()">
+  <form name = "ingrForm" ng-controller = "IngrController as ingrCtrl" >
     <p>Select your ingredients</p>
     <details ng-repeat = "type in ingrCtrl.types">
       <summary align="left">{{type.name}}</summary>
@@ -30,29 +30,27 @@
         <input type="checkbox" name = "selectIngr" value="{{option}}" ng-click="ingrCtrl.checkIngr(option)"/>{{option}}
       </label>
     </details>
-    <center><button class="header-bar" >Search</button></center>
+    <!-- <center><button class="header-bar" >Search</button></center> -->
 
   </form>
 </div>
 
 
-
   <div class="floatright">
-    <form name = "mealForm" ng-controller = "MealController as mealCtrl"
-                            ng-submit="mealCtrl.clickedMeal(meal_model,cuisine_model)">
+    <form name = "mealForm" ng-controller = "MealController as mealCtrl">
       <label>Select meal type:</label>
 
-      <Select ng-model="meal_model" ng-options = "type for type in mealCtrl.meal" >
+      <Select ng-model="meal_model" ng-options = "type for type in mealCtrl.meal" ng-change="mealCtrl.selectMeal(meal_model)">
         <option value="" >--Select Meal Type--</option>
     </Select>&ensp;&ensp;&ensp;&ensp;
 
       <label>Select cuisine type:</label>
-      <Select ng-model="cuisine_model"  ng-options = "type for type in mealCtrl.cuisine" >
+      <Select ng-model="cuisine_model"  ng-options = "type for type in mealCtrl.cuisine" ng-change="mealCtrl.selectCuisine(cuisine_model)">
         <option value="" >--Select Cuisine Type--</option>
       </Select>&ensp;
 &ensp;
-   <button class="search">Search</button>
- </form>
+    </form>
+
 
       <section ng-controller = "RecipeController as recipeCtrl">
         <button class="search" ng-click = "recipeCtrl.showRecipe()">Show Recipe</button>

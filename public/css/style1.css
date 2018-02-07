@@ -10,6 +10,10 @@ div.header-bar {
 
 }
 
+summary{
+  transition: 0.5s;
+}
+
 * {
     box-sizing: border-box;
 }
