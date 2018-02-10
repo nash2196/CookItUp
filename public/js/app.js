@@ -1,4 +1,4 @@
-var app = angular.module('MainApp',['ngFileUpload']);
+var app = angular.module('MainApp',['ngFileUpload','menu-directives']);
 
 app.service('valueService',function(){
     this.selectedIngr = [];
@@ -83,9 +83,12 @@ app.controller('MealController',function($http, valueService){
 });
 
 
-app.controller('RecipeController',function(valueService){
+app.controller('RecipeController',function($http, valueService){
 
-  this.recipes = recipes;
+  $http.get('/recipes').then((response)=>{
+    this.recipes = response.data;
+  });
+  // this.recipes = recipes;
   this.selectedRecipe = [];
   this.ingredients = valueService.getIngr();
 
@@ -170,28 +173,3 @@ app.controller('MediaController', ['Upload', function(Upload){
     });
   };
 }]);
-
-
-var recipes = [
-  {
-    id: "OTC",
-    name: "Onion Tomato Curry",
-    ingredients: ["Onion","Tomato"],
-    images: ["recipe1-img1.jpeg","recipe1-img2.jpeg"],
-    meal_type: "Lunch",
-    cuisine_type: "Indian",
-    author: "Aditya Patel",
-    likes: 10
-  },
-
-  {
-    id: "BS",
-    name: "Banana Shake",
-    ingredients: ["Milk","Banana"],
-    images: ["recipe2-img1.jpeg","recipe2-img2.jpeg"],
-    meal_type: "Breakfast",
-    cuisine_type: "Italian",
-    author: "Maitri Baria",
-    likes: 20
-  }
-];

@@ -10,6 +10,7 @@
   <script type = "text/javascript" src="js/ng-file-upload/dist/ng-file-upload-shim.min.js"></script>
   <script type = "text/javascript" src="js/angular/angular.min.js"></script>
   <script type = "text/javascript" src="js/ng-file-upload/dist/ng-file-upload.min.js"></script>
+  <script type="text/javascript" src="js/menu.js"></script>
   <script type="text/javascript" src="js/app.js"></script>
 
 <div class="header-bar" >
@@ -55,12 +56,13 @@
       <section ng-controller = "RecipeController as recipeCtrl">
         <button class="search" ng-click = "recipeCtrl.showRecipe()">Show Recipe</button>
         <div ng-repeat = "recipe in recipeCtrl.selectedRecipe">
-          <img class = "recipe" ng-src = "img/{{recipe.images[0]}}"/>
+          <a href=""><img class = "recipe" ng-src = "img/{{recipe.images[0]}}"/></a>
           <p>Name: {{recipe.name}}</p>
           <p>Uploaded by: {{recipe.author}}</p>
           <p>Likes:{{recipe.likes}}</p>
         </div>
       </section>
+
 
   </div>
 </body>

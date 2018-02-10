@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html ng-app='MainApp' lang='en'>
 <head>
 <link rel="stylesheet" href="css/style1.css" type="text/css">
-<!-- <link class="jsbin" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
+<link class="jsbin" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
 <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-<script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script> -->
+<script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>
 <meta charset=utf-8 />
 <title>Add Recipe</title>
 <style>
@@ -19,9 +19,10 @@
 <script type = "text/javascript" src="js/ng-file-upload/dist/ng-file-upload.min.js"></script>
 <script type="text/javascript" src="js/app.js"></script>
 <div class="header-bar"><a href="index.html" style="color:white; text-decoration:none">Cook It Up</a></div>&nbsp;
-<div class="container">
+<div class="container"> -->
 
-<span ng-controller="MediaController as mediaCtrl">
+<form ng-controller="MediaController as mediaCtrl" ng-submit="mediaCtrl.uploadPic(pic); mediaCtrl.uploadPic(video)">
+<span>
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<img id="blah" ngf-thumbnail="pic || 'img/addrecipe.png'" style="width:200px;height:150px;border:double; border-radius:4px;"/>
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
 &ensp;&ensp;&ensp;&ensp;
@@ -31,7 +32,7 @@
 </video></br></br>
 
   <label for="pic">Upload Photo:</label>&ensp;<input type='file' ng-model="pic" name="pic" ngf-select ngf-accept="'image/*'">
-  <button ng-click="mediaCtrl.uploadPic(pic)">Upload</button>
+  <!-- <button ng-click="mediaCtrl.uploadPic(pic)">Upload</button> -->
   <span class="progress" ng-show="!mediaCtrl.errorMsg && pic.progress >= 0">
         <div style="width:{{pic.progress}}%" ng-bind="pic.progress + '%'"></div>
   </span>
@@ -41,7 +42,7 @@
 
 
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<label for="video">Upload Video:</label>&ensp;<input type="file" name="video" ng-model="video" ngf-select ngf-accept="'video/*'">
-  <button ng-click="mediaCtrl.uploadPic(video)">Upload</button>
+  <!-- <button ng-click="mediaCtrl.uploadPic(video)">Upload</button> -->
     <span class="progress" ng-show="!mediaCtrl.errorMsg && video.progress >= 0">
       <div style="width:{{video.progress}}%" ng-bind="video.progress + '%'"></div>
     </span>
@@ -49,7 +50,7 @@
     <span ng-show="video.result">Done!</span>
     <span ng-show="mediaCtrl.errorMsg">OOPS! {{mediaCtrl.errorMsg}}</span>
 
-</span>
+</span><br>
 <!-- <script>
 function readURL(input) {
         if (input.files && input.files[0]) {
@@ -109,8 +110,8 @@ function readURL(input) {
       </Select></br></br></br>
       <center><input type="submit" name="button" value="Add"></center>
 </span>
+</form>
 
-
-</div>
+<!-- </div>
 </body>
-</html>
+</html> -->
