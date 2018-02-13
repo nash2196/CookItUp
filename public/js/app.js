@@ -156,14 +156,18 @@ app.controller('RecipeController',function($http, valueService){
 
 });
 
-app.controller('MediaController', ['Upload', function(Upload){
+app.controller('MediaController', ['Upload','$http', function(Upload,$http){
+
+  var uuid = null;
 
   this.uploadPic = (file) => {
+
+    if(uuid === null){
     file.upload = Upload.upload({
       url: '/upload/pic',
       data: {file: file}
     }).then((response) => {
-          file.result = response.data;
+          file.result = uuid = response.data;
     }, (response) => {
       if (response.status > 0){
         this.errorMsg = response.status + ': ' + response.data;
@@ -171,5 +175,42 @@ app.controller('MediaController', ['Upload', function(Upload){
     }, (evt) => {
       file.progress = parseInt(100.0 * evt.loaded / evt.total);
     });
+
+  }else{
+    file.upload = Upload.upload({
+      url: '/upload/pic',
+      data: {file: file, 'uuid':uuid}
+    }).then((response) => {
+          file.result = uuid = response.data;
+    }, (response) => {
+      if (response.status > 0){
+        this.errorMsg = response.status + ': ' + response.data;
+      }
+    }, (evt) => {
+      file.progress = parseInt(100.0 * evt.loaded / evt.total);
+    });
+  }
   };
+
+this.uploadData = (form) => {
+
+  var formData = {
+    uuid:uuid,
+    recipeName: form.recipeName,
+    method: form.method,
+    time: form.time,
+    serves: form.serve,
+    taste: form.taste
+  };
+
+  console.log(formData);
+
+  $http.post('/upload/data',formData)
+  .then((response) => {
+    console.log("Success! UUID:",response.data);
+  }, (response) => {
+   console.log("Error:",response.status,":::",response.data);
+ });
+};
+
 }]);

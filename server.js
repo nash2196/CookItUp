@@ -1,9 +1,12 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var multipart = require('connect-multiparty');
+var uuidv4 = require('uuid/v4');
 var multipartMiddleware = multipart();
 var app = express();
 
 app.use(express.static(__dirname + "/public"));
+app.use(bodyParser.json());
 
 app.get('/types', function(request,response){
   var types = [
@@ -53,11 +56,33 @@ app.get('/recipes', function(request,response){
 
 
 app.post('/upload/pic',multipartMiddleware, function(request,response){
+    var uuid = null;
+
+    if(request.body.uuid===undefined){
+      var file = request.files.file;
+      uuid = uuidv4();
+      console.log(file.name);
+      console.log(file.type);
+      console.log(file.path);
+      console.log("generated: ",uuid);
+      response.send(uuid);
+  }else{
     var file = request.files.file;
+    uuid = request.body.uuid;
     console.log(file.name);
     console.log(file.type);
     console.log(file.path);
-    response.send("Success");
+    console.log("from request: ",request.body.uuid);
+    response.send(uuid);
+  }
+});
+
+app.post('/upload/data',function(request,response){
+
+  var formData = request.body;
+  console.log(formData.recipeName);
+  response.send(formData.uuid);
+
 });
 
 app.listen(8181,function(){

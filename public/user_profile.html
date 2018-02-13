@@ -1,14 +1,11 @@
 <html ng-app = 'MainApp'>
 <head>
-<link class="jsbin" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
+<!-- <link class="jsbin" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
 <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-<script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>
+<script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script> -->
 <link rel="stylesheet" href="css/style1.css" type="text/css">
 <meta charset=utf-8 />
-<style>
-  article, aside, figure, footer, header, hgroup,
-  menu, nav, section { display: block; }
-</style>
+
 </head>
 <body>
   <script type = "text/javascript" src="js/ng-file-upload/dist/ng-file-upload-shim.min.js"></script>
@@ -17,29 +14,30 @@
   <script type="text/javascript" src="js/menu.js"></script>
   <script type="text/javascript" src="js/app.js"></script>
 <div class="header-bar"><a href="index.html" style="color:white; text-decoration:none">Cook It Up</a></div>&nbsp;
-<div class="tabs">
-  <nav>
-    <a>Profile</a>
-    <a>Search Recipes</a>
-    <a>Favorite Recipes</a>
-    <a>Add a Recipe</a>
-    <a>Edit Profile</a>
-  </nav>
-  <div class="content">
+<div  class="tabs" ng-controller="MenuController as tab">
+  <ul class="nav">
+    <li ng-class="{ active:tab.isSet(1) }" ng-click="tab.setTab(1)">Profile</li>
+    <li ng-class="{ active:tab.isSet(2) }" ng-click="tab.setTab(2)">Search Recipes</li>
+    <li ng-class="{ active:tab.isSet(3) }" ng-click="tab.setTab(3)">Favorite Recipes</li>
+    <li ng-class="{ active:tab.isSet(4) }" ng-click="tab.setTab(4)">Add a Recipe</li>
+    <li ng-class="{ active:tab.isSet(5) }" ng-click="tab.setTab(5)">Edit Profile</li>
+  </ul>
+
+  <div class="content" ng-show="tab.isSet(1)">
     <p>User Profile</p>
   </div>
-  <div class="content">
+  <div class="content" ng-show="tab.isSet(2)">
     <p>User can search recipes</p>
   </div>
-  <div class="content">
+  <div class="content" ng-show="tab.isSet(3)">
     <!-- <p>User can see their favorite recipes</p> -->
     <fav-recipes></fav-recipes>
   </div>
-  <div class="content">
+  <div class="content" ng-show="tab.isSet(4)">
     <!-- <p>User can add a recipe</p> -->
     <add-recipe></add-recipe>
   </div>
-  <div class="content">
+  <div  class="content" ng-show="tab.isSet(5)">
     <!-- <p>User can edit profile</p> -->
     <edit-profile></edit-profile>
   </div>
@@ -54,7 +52,7 @@
   box-shadow:0px 0px 40px rgba(0,0,0,0,0.2);
 }
 
-.tabs nav {
+.tabs .nav {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
@@ -62,45 +60,40 @@
   color: black;
   border-right:1px solid black;
   text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2);
-  width: 150px;
+  width: 160px;
 }
 
-.tabs nav a {
-  padding: 20px 0px;
+
+.tabs .nav li {
+  list-style-type: none;
+  padding: 20px 0px 20px 0px;
   text-align: center;
   width: 200px;
   cursor: pointer;
 }
 
-.tabs nav a:hover,
-.tabs nav a.selected {
+.tabs .nav li:hover,
+.tabs .nav li.active {
   background-color:#ddd;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
 }
 .tabs .content {
   padding: 20px 0px;
-  position:absolute;
+  position: absolute;
   top:0px;
-  left:150px;
-  color:#6C5D5D;
-  width: 0px;
+  left:160px;
+  /* color:#6C5D5D; */
   overflow: hidden;
-  opacity: 0;
+  width: calc(100% - 160px);
+  opacity: 1;
   transition: opacity 0.1s linear 0s;
 }
 
-.tabs .content.visible {
-  padding: 20px;
-  width: calc(100% - 150px);
-  opacity: 1;
-}
+.tabs .content p { padding-left: 20px; }
 
-.tabs .content p { padding-bottom: 2px; }
-
-.tabs .content p:last-of-type { padding-bottom: 0px; }
 </style>
 
-<script>
+<!-- <script>
 $(function() {
   $('.tabs nav a').on('click', function() {
     show_content($(this).index());
@@ -118,6 +111,6 @@ $(function() {
     $('.tabs nav a:nth-of-type(' + (index + 1) + ')').addClass('selected');
    }
 });
-</script>
+</script> -->
 </body>
 </html>

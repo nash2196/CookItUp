@@ -18,10 +18,10 @@
 <script type = "text/javascript" src="js/angular/angular.min.js"></script>
 <script type = "text/javascript" src="js/ng-file-upload/dist/ng-file-upload.min.js"></script>
 <script type="text/javascript" src="js/app.js"></script>
-<div class="header-bar"><a href="index.html" style="color:white; text-decoration:none">Cook It Up</a></div>&nbsp;
-<div class="container"> -->
+<div class="header-bar"><a href="index.html" style="color:white; text-decoration:none">Cook It Up</a></div>&nbsp;-->
+<div class="container">
 
-<form ng-controller="MediaController as mediaCtrl" ng-submit="mediaCtrl.uploadPic(pic); mediaCtrl.uploadPic(video)">
+<form name="addRecipeForm" ng-controller="MediaController as mediaCtrl" ng-submit="mediaCtrl.uploadData(addRecipeForm)">
 <span>
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<img id="blah" ngf-thumbnail="pic || 'img/addrecipe.png'" style="width:200px;height:150px;border:double; border-radius:4px;"/>
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
@@ -32,7 +32,7 @@
 </video></br></br>
 
   <label for="pic">Upload Photo:</label>&ensp;<input type='file' ng-model="pic" name="pic" ngf-select ngf-accept="'image/*'">
-  <!-- <button ng-click="mediaCtrl.uploadPic(pic)">Upload</button> -->
+  <button ng-click="mediaCtrl.uploadPic(pic)">Upload</button>
   <span class="progress" ng-show="!mediaCtrl.errorMsg && pic.progress >= 0">
         <div style="width:{{pic.progress}}%" ng-bind="pic.progress + '%'"></div>
   </span>
@@ -42,7 +42,7 @@
 
 
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<label for="video">Upload Video:</label>&ensp;<input type="file" name="video" ng-model="video" ngf-select ngf-accept="'video/*'">
-  <!-- <button ng-click="mediaCtrl.uploadPic(video)">Upload</button> -->
+  <button ng-click="mediaCtrl.uploadPic(video)">Upload</button>
     <span class="progress" ng-show="!mediaCtrl.errorMsg && video.progress >= 0">
       <div style="width:{{video.progress}}%" ng-bind="video.progress + '%'"></div>
     </span>
@@ -75,7 +75,7 @@ function readURL(input) {
 </script> -->
 <span ng-controller = "IngrController as ingrCtrl">
      <label>Recipe Name:</label>
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="text" name="Recipe Name" placeholder="Enter the name of the recipe" required></br><br>
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="text" ng-model="addRecipeForm.recipeName" placeholder="Enter the name of the recipe" required></br><br>
      <label>Ingredients Required:</label>
      <!-- <input type="text" cols="50" rows="10" style="width:200px; height:50px;" name="ingredients" required/></br></br> -->
      <!-- <form ng-controller = "IngrController as ingrCtrl" ng-submit = "ingrCtrl.final()"> -->
@@ -90,15 +90,16 @@ function readURL(input) {
        <!-- <center><button class="header-bar" >Search</button></center> -->
        <hr>
      <!-- </form> -->
-     <label for = "Method">Method:</label>
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="text" cols="50" rows="10" style="width:200px; height:50px;" name="Method" required/></br></br>
-     <label for="time">Time Required:</label>
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="time" name="time"></br></br>
-     <label for="serve">Serve:</label>
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="number" placeholder="Enter no. of serving" name="serve" min="1">
-     &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<label for="taste">Taste:</label>
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="text" name="taste" placeholder="Level of Taste eg:mild/spicy,etc."></br></br>
 </span>
+
+     <label for = "Method">Method:</label>
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="text" cols="50" rows="10" style="width:200px; height:50px;" ng-model="addRecipeForm.method" required/></br></br>
+     <label for="time">Time Required:</label>
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="time" ng-model="addRecipeForm.time"></br></br>
+     <label for="serve">Serve:</label>
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="number" placeholder="Enter no. of serving" ng-model="addRecipeForm.serve" min="1">
+     &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<label for="taste">Taste:</label>
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="text" ng-model="addRecipeForm.taste" placeholder="Level of Taste eg:mild/spicy,etc."></br></br>
 <span ng-controller = "MealController as mealCtrl">
      <label>Select meal type:</label>
 &ensp;&ensp;&ensp;&ensp;<Select ng-model="meal_model" ng-options = "type for type in mealCtrl.meal" ng-change="mealCtrl.selectMeal(meal_model)">
@@ -112,6 +113,6 @@ function readURL(input) {
 </span>
 </form>
 
-<!-- </div>
-</body>
+</div>
+<!-- </body>
 </html> -->
