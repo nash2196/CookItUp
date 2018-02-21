@@ -9,6 +9,7 @@ app.service('valueService',function(){
     var addIngr = (ingr) => {
       this.selectedIngr.push(ingr);
     };
+
     var getIngr = () => {
       return this.selectedIngr;
     };
@@ -17,6 +18,7 @@ app.service('valueService',function(){
     var addMeal = (meal_type) => {
       this.selectedMeal = meal_type;
     };
+
     var getMeal = () => {
       return this.selectedMeal;
     };
@@ -66,8 +68,9 @@ app.controller('MealController',function($http, valueService){
 
       //retrieve meal types and cuisine types
       $http.get('/meals').then((response) => {
-        this.meal = response.data.meals;
-        this.cuisine = response.data.cuisines;
+
+        this.meal = response.data.meals.meals;
+        this.cuisine = response.data.cuisines.cuisines;
       });
 
 
@@ -99,13 +102,13 @@ app.controller('RecipeController',function($http, valueService){
     if(this.ingredients.length==0){
         var meal = valueService.getMeal();
         var cuisine = valueService.getCuisine();
-        //console.log("From showRecipe ",meal," ",cuisine);
+        console.log("From showRecipe ",meal," ",cuisine);
 
         //if user selects both meal and cuisine type
         if((meal !== null) && (cuisine !== null)) {
 
           for(var i=0;i<this.recipes.length;i++){
-            if(this.recipes[i].meal_type===meal && this.recipes[i].cuisine_type===cuisine){
+            if(this.recipes[i].mealtype===meal && this.recipes[i].cuisinetype===cuisine){
               this.selectedRecipe.push(this.recipes[i]);
               console.log(this.selectedRecipe);
             };//end if
@@ -115,7 +118,7 @@ app.controller('RecipeController',function($http, valueService){
       }else if(meal === null && cuisine !== null){
 
           for(var i=0;i<this.recipes.length;i++){
-            if(this.recipes[i].cuisine_type===cuisine){
+            if(this.recipes[i].cuisinetype===cuisine){
               this.selectedRecipe.push(this.recipes[i]);
             }//end if
           }; //end for loop
@@ -124,7 +127,7 @@ app.controller('RecipeController',function($http, valueService){
       }else if(meal !== null && cuisine === null){
 
           for(var i=0;i<this.recipes.length;i++){
-            if(this.recipes[i].meal_type===meal){
+            if(this.recipes[i].mealtype===meal){
               this.selectedRecipe.push(this.recipes[i]);
             }//end if
           }; //end for loop
@@ -157,6 +160,29 @@ app.controller('RecipeController',function($http, valueService){
 });
 
 app.controller('MediaController', ['Upload', function(Upload){
+
+  // var fileId = new ObjectID();
+  // var gridStore = new GridStore(db, fileId, "w", {root:'fs'});
+  // gridStore.chunkSize = 1024 * 256;
+  //
+  // gridStore.open(function(err, gridStore) {
+  //  Step(
+  //    function writeData() {
+  //      var group = this.group();
+  //
+  //      for(var i = 0; i < 1000000; i += 5000) {
+  //        gridStore.write(new Buffer(5000), group());
+  //      }
+  //    },
+  //
+  //    function doneWithWrite() {
+  //      gridStore.close(function(err, result) {
+  //        console.log("File has been written to GridFS");
+  //      });
+  //    }
+  //  )
+  // });
+
 
   this.uploadPic = (file) => {
     file.upload = Upload.upload({

@@ -24,45 +24,41 @@
 <div style="width:100%">
   <div class="floatleft">
   <form name = "ingrForm" ng-controller = "IngrController as ingrCtrl" >
-    <p>Select your ingredients</p>
+    <p><center>Select your ingredients</center></p>
     <details ng-repeat = "type in ingrCtrl.types">
-      <summary align="left">{{type.name}}</summary>
-      <label ng-repeat = "option in type.options">
-        <input type="checkbox" name = "selectIngr" value="{{option}}" ng-click="ingrCtrl.checkIngr(option)"/>{{option}}
+      <summary align="left">{{type.type}}</summary>
+      <label for="selectIngr" ng-repeat = "option in type.options">
+        <input type="checkbox" name = "selectIngr" value="{{option.ingredient_name}}" ng-click="ingrCtrl.checkIngr(option.ingredient_name)"/>{{option.ingredient_name}}
       </label>
     </details>
     <!-- <center><button class="header-bar" >Search</button></center> -->
 
   </form>
-</div>
-
+  </div>
 
   <div class="floatright">
     <form name = "mealForm" ng-controller = "MealController as mealCtrl">
-      <label>Select meal type:</label>
 
+      <label>Select meal type:</label>
       <Select ng-model="meal_model" ng-options = "type for type in mealCtrl.meal" ng-change="mealCtrl.selectMeal(meal_model)">
         <option value="" >--Select Meal Type--</option>
-    </Select>&ensp;&ensp;&ensp;&ensp;
+      </Select>&ensp;&ensp;&ensp;&ensp;
 
       <label>Select cuisine type:</label>
       <Select ng-model="cuisine_model"  ng-options = "type for type in mealCtrl.cuisine" ng-change="mealCtrl.selectCuisine(cuisine_model)">
         <option value="" >--Select Cuisine Type--</option>
-      </Select>&ensp;
-&ensp;
+      </Select>&ensp;&ensp;
     </form>
-
 
       <section ng-controller = "RecipeController as recipeCtrl">
         <button class="search" ng-click = "recipeCtrl.showRecipe()">Show Recipe</button>
         <div ng-repeat = "recipe in recipeCtrl.selectedRecipe">
-          <a href=""><img class = "recipe" ng-src = "img/{{recipe.images[0]}}"/></a>
-          <p>Name: {{recipe.name}}</p>
-          <p>Uploaded by: {{recipe.author}}</p>
+        <!--  <a href=""><img class = "recipe" ng-src = "img/{{recipe.photos[0]}}"/></a>-->
+          <p>Name: {{recipe.recipe_name}}</p>
+          <p>Uploaded by: {{recipe.uploader}}</p>
           <p>Likes:{{recipe.likes}}</p>
         </div>
       </section>
-
 
   </div>
 </body>
