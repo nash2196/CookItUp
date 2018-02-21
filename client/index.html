@@ -2,8 +2,8 @@
 <html ng-app = 'MainApp' lang='en'>
 <head>
   <title>Cook It Up</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" type="text/css" href="css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
 
@@ -13,57 +13,63 @@
   <script type="text/javascript" src="js/menu.js"></script>
   <script type="text/javascript" src="js/app.js"></script>
 
-<div class="header-bar" >
-    <a href="front_page.html" style="color:white; text-decoration:none">Cook It Up</a>
-    <a href="login_page.html">
-    <button class="header-bar" >Login</button></a>
+  <div class="header-bar" ng-controller="HeaderController as headCtrl">
+    <a href="index.html" style="color:white; text-decoration:none">Cook It Up</a>
+    <span class="header-bar" ng-hide="headCtrl.loggedIn"><a href="login_page.html">
+      <button class="header-bar" >Login</button></a>
 
-    <a href="signup_page.html">
-      <button class="header-bar">Sign Up</button></a>
-</div>
-<div style="width:100%">
-  <div class="floatleft">
-  <form name = "ingrForm" ng-controller = "IngrController as ingrCtrl" >
-    <p>Select your ingredients</p>
-    <details ng-repeat = "type in ingrCtrl.types">
-      <summary align="left">{{type.name}}</summary>
-      <label ng-repeat = "option in type.options">
-        <input type="checkbox" name = "selectIngr" value="{{option}}" ng-click="ingrCtrl.checkIngr(option)"/>{{option}}
-      </label>
-    </details>
-    <!-- <center><button class="header-bar" >Search</button></center> -->
-
-  </form>
-</div>
-
-
-  <div class="floatright">
-    <form name = "mealForm" ng-controller = "MealController as mealCtrl">
-      <label>Select meal type:</label>
-
-      <Select ng-model="meal_model" ng-options = "type for type in mealCtrl.meal" ng-change="mealCtrl.selectMeal(meal_model)">
-        <option value="" >--Select Meal Type--</option>
-    </Select>&ensp;&ensp;&ensp;&ensp;
-
-      <label>Select cuisine type:</label>
-      <Select ng-model="cuisine_model"  ng-options = "type for type in mealCtrl.cuisine" ng-change="mealCtrl.selectCuisine(cuisine_model)">
-        <option value="" >--Select Cuisine Type--</option>
-      </Select>&ensp;
-&ensp;
-    </form>
+      <a href="signup_page.html">
+        <button class="header-bar">Sign Up</button></a>
+      </span>
+      <span class="header-bar" ng-show="headCtrl.loggedIn">
+        <a href="user_profile.html"><img class="header-bar" src="img/user_profile.png"/></a>
+        <button class="header-bar">Logout</button>
+      </span>
+    </div>
+    
+    <div style="width:100%">
+      <div class="floatleft">
+        <form name = "ingrForm" ng-controller = "IngrController as ingrCtrl" >
+          <p>Select your ingredients</p>
+          <details ng-repeat = "type in ingrCtrl.types">
+            <summary align="left">{{type.name}}</summary>
+            <label ng-repeat = "option in type.options">
+              <input type="checkbox" name = "selectIngr" value="{{option}}" ng-click="ingrCtrl.checkIngr(option)"/>{{option}}
+            </label>
+          </details>
+          <!-- <center><button class="header-bar" >Search</button></center> -->
+        </form>
+      </div>
 
 
-      <section ng-controller = "RecipeController as recipeCtrl">
-        <button class="search" ng-click = "recipeCtrl.showRecipe()">Show Recipe</button>
-        <div ng-repeat = "recipe in recipeCtrl.selectedRecipe">
-          <a href=""><img class = "recipe" ng-src = "img/{{recipe.images[0]}}"/></a>
-          <p>Name: {{recipe.name}}</p>
-          <p>Uploaded by: {{recipe.author}}</p>
-          <p>Likes:{{recipe.likes}}</p>
-        </div>
-      </section>
+      <div class="floatright">
+        <form name = "mealForm" ng-controller = "MealController as mealCtrl">
+          <label>Select meal type:</label>
+
+          <Select ng-model="meal_model" ng-options = "type for type in mealCtrl.meal" ng-change="mealCtrl.selectMeal(meal_model)">
+            <option value="" >--Select Meal Type--</option>
+          </Select>&ensp;&ensp;&ensp;&ensp;
+
+          <label>Select cuisine type:</label>
+          <Select ng-model="cuisine_model"  ng-options = "type for type in mealCtrl.cuisine" ng-change="mealCtrl.selectCuisine(cuisine_model)">
+            <option value="" >--Select Cuisine Type--</option>
+          </Select>&ensp;
+          &ensp;
+        </form>
 
 
-  </div>
-</body>
-</html>
+        <section ng-controller = "RecipeController as recipeCtrl">
+          <button class="search" ng-click = "recipeCtrl.showRecipe()">Show Recipe</button>
+          <div ng-repeat = "recipe in recipeCtrl.selectedRecipe">
+            <a class="recipe" href="recipe-view.html"><img class = "recipe" ng-src = "img/{{recipe.images[0]}}"/>
+              <p>Name: {{recipe.name}}</p>
+              <p>Uploaded by: {{recipe.author}}</p>
+              <p>Likes:{{recipe.likes}}</p>
+            </a>
+          </div>
+        </section>
+
+
+      </div>
+    </body>
+    </html>

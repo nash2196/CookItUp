@@ -10,6 +10,15 @@ div.header-bar {
 
 }
 
+span.header-bar{
+  float: right;
+}
+
+img.header-bar{
+
+    width: 50px;
+    height: 50px;
+}
  button.header-bar {
     float:right;
     border-right: 1px solid #bbb;
@@ -141,4 +150,9 @@ form button{
     font-family:Times New Roman;
     float:left;
     display:inline-block;
+}
+
+a.recipe {
+    text-decoration: none;
+    color : #000000
 }

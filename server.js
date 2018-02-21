@@ -1,12 +1,22 @@
 var express = require('express');
+var session = require('express-session')
 var bodyParser = require('body-parser');
 var multipart = require('connect-multiparty');
 var uuidv4 = require('uuid/v4');
 var multipartMiddleware = multipart();
 var app = express();
 
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + "/client"));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(session({
+  secret:'abcdefgh1234',
+  resave: false,
+  saveUninitialized: true}));
+
+
+var _session;
+var loggedIn = false;
 
 app.get('/types', function(request,response){
   var types = [
@@ -54,6 +64,32 @@ app.get('/recipes', function(request,response){
   response.send(recipes);
 });
 
+app.get('/login',function(request,response){
+  console.log("GET recieved");
+  if(loggedIn===true){
+    var username = _session.name;
+    response.status(200).send(username);
+  }else{
+    response.status(400).send("Error");
+  }
+});
+
+app.post('/login',function(request,response){
+      console.log("POST recieved");
+    _session = request.session;
+
+    console.log(request.body);
+    if(request.body.pswd==='1'){
+      _session.name = request.body.email;
+      loggedIn = true;
+      response.status(200).send("Success");
+    }else{
+      loggedIn = false;
+      response.status(400).send("Error");
+    }
+
+});
+
 
 app.post('/upload/pic',multipartMiddleware, function(request,response){
     var uuid = null;
@@ -80,7 +116,9 @@ app.post('/upload/pic',multipartMiddleware, function(request,response){
 app.post('/upload/data',function(request,response){
 
   var formData = request.body;
-  console.log(formData.recipeName);
+  console.log("Name: ",formData.recipeName);
+  console.log("ingredients: ",formData.ingredients);
+  console.log("meal_type: ",formData.meal_type," cuisine_type: ",formData.cuisine_type);
   response.send(formData.uuid);
 
 });
