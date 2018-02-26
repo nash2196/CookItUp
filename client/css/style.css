@@ -98,14 +98,14 @@ button.search:hover {
 }
 
 
-form{
+form.homepage {
   text-align: center;
   margin-top: 30px;
   font-size: 24px;
   font-family: Times;
 
 }
-form button{
+.homepage button{
   position:right;
   background-color: #4CAF50;
   border: none;

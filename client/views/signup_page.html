@@ -1,11 +1,24 @@
-<html>
+<!-- <html>
 <head><title>Cook It Up</title>
   <link rel="stylesheet" type="text/css" href="css/style1.css">
 
 </head>
 <body>
 
-  <div class="header-bar"><a href="index.html" style="color:white; text-decoration:none">Cook It Up</a></div>&nbsp;
+  <div class="header-bar"><a href="index.html" style="color:white; text-decoration:none">Cook It Up</a></div>&nbsp; -->
+  <div class="header-bar" ng-controller="HeaderController as headCtrl">
+    <a ui-sref="home" style="color:white; text-decoration:none">Cook It Up</a>
+    <span class="header-bar" ng-hide="{{headCtrl.loggedIn}}"><a ui-sref="login">
+      <button class="header-bar">Login</button></a>
+      <a ui-sref="signup">
+        <button class="header-bar">Sign Up</button></a>
+      </span>
+
+      <span class="header-bar" ng-show="{{headCtrl.loggedIn}}">
+        <a href="user_profile.html"><img class="header-bar" src="img/user_profile.png"/></a>
+        <button class="header-bar">Logout</button>
+      </span>
+  </div>
   <center>
     <div class="container">
     <img src="img/signup.png" width="100px" height="100px"></img>
@@ -22,6 +35,6 @@
       </form>
       <div>
     </center>
-
+<!--
   </body>
-  </html>
+  </html> -->

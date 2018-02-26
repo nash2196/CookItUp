@@ -1,29 +1,29 @@
-var app = angular.module('MainApp',['ngFileUpload','menu-directives']);
+var app = angular.module('MainApp',['ngFileUpload','routes']);
 
 app.service('authService',function($http){
 
   this.loggedIn = false;
 
   var setLogin = (userData) => {
-    $http.post('/login',userData)
-    .then((response)=>{
-      if(response.status === 200 && response.data === "Success"){
-        this.loggedIn=true;
-        console.log("set: ",this.loggedIn);
-        }
-    },(response)=>{
-      this.loggedIn=false;
-      });
+    return $http.post('/login',userData)
+    // .then((response)=>{
+    //   if(response.status === 200 && response.data === "Success"){
+    //     this.loggedIn=true;
+    //     console.log("set: ",this.loggedIn);
+    //     }
+    // },(response)=>{
+    //   this.loggedIn=false;
+    //   });
     };
 
   var checkLogin = () => {
-    $http.get('/login').then((response)=>{
-      if(response.status===200){
-        this.loggedIn = true;
-      }
-    },(response)=>{
-      this.loggedIn = false;
-    });
+    // $http.get('/login').then((response)=>{
+    //   if(response.status===200){
+    //     this.loggedIn = true;
+    //   }
+    // },(response)=>{
+    //   this.loggedIn = false;
+    // });
     return this.loggedIn;
   };
 
@@ -74,20 +74,20 @@ app.service('valueService',function(){
     };
 });
 
-app.controller('LoginController',function($http,authService){
-    //this.loggedIn = authService.checkLogin();
-    this.login = (form) => {
-      var userData = {
-        email : form.uname,
-        pswd : form.pswd
-      }
-      authService.setLogin(userData);
-      authService.checkLogin();
-    }
-});
+// app.controller('LoginController',function($http,authService){
+//     //this.loggedIn = authService.checkLogin();
+//     this.login = (form) => {
+//       var userData = {
+//         email : form.uname,
+//         pswd : form.pswd
+//       }
+//       authService.setLogin(userData);
+//       authService.checkLogin();
+//     }
+// });
 
-app.controller('HeaderController',function(authService){
-  this.loggedIn = authService.checkLogin();
+app.controller('HeaderController',function($stateParams,authService){
+  this.loggedIn = $stateParams;
   console.log("headCtrl login: ",this.loggedIn);
 });
 
@@ -266,4 +266,12 @@ this.uploadData = (form) => {
  });
 };
 
+}]);
+
+
+
+app.run(['$rootScope', '$state', '$stateParams',
+  function ($rootScope, $state, $stateParams) {
+    $rootScope.$state = $state;
+    $rootScope.$stateParams = $stateParams;
 }]);

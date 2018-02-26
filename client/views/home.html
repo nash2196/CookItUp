@@ -1,0 +1,56 @@
+<div class="header-bar">
+  <a ui-sref="home" style="color:white; text-decoration:none">Cook It Up</a>
+  <span class="header-bar" ng-hide="{{$stateParams.loggedIn}}"><a ui-sref="login">
+    <button class="header-bar">Login</button></a>
+    <a ui-sref="signup">
+      <button class="header-bar">Sign Up</button></a>
+    </span>
+
+    <span class="header-bar" ng-show="{{$stateParams.loggedIn}}">
+      <a ui-sref="user.profile({userID:'nishant'})"><img class="header-bar" src="img/user_profile.png"/></a>
+      <button class="header-bar" ng-click="loginCtrl.logout()">Logout</button>
+    </span>
+</div>
+
+<div class="floatleft">
+    <form class="homepage" name = "ingrForm" ng-controller = "IngrController as ingrCtrl" >
+      <p>Select your ingredients</p>
+      <details ng-repeat = "type in ingrCtrl.types">
+        <summary align="left">{{type.name}}</summary>
+        <label ng-repeat = "option in type.options">
+          <input type="checkbox" name = "selectIngr" value="{{option}}" ng-click="ingrCtrl.checkIngr(option)"/>{{option}}
+        </label>
+      </details>
+      <!-- <center><button class="header-bar" >Search</button></center> -->
+    </form>
+</div>
+
+
+<div class="floatright">
+    <form class="homepage" name = "mealForm" ng-controller = "MealController as mealCtrl">
+      <label>Select meal type:</label>
+
+      <Select ng-model="meal_model" ng-options = "type for type in mealCtrl.meal" ng-change="mealCtrl.selectMeal(meal_model)">
+        <option value="" >--Select Meal Type--</option>
+      </Select>&ensp;&ensp;&ensp;&ensp;
+
+      <label>Select cuisine type:</label>
+      <Select ng-model="cuisine_model"  ng-options = "type for type in mealCtrl.cuisine" ng-change="mealCtrl.selectCuisine(cuisine_model)">
+        <option value="" >--Select Cuisine Type--</option>
+      </Select>&ensp;
+      &ensp;
+    </form>
+
+
+    <section ng-controller = "RecipeController as recipeCtrl">
+      <button class="search" ng-click = "recipeCtrl.showRecipe()">Show Recipe</button>
+      <div ng-repeat = "recipe in recipeCtrl.selectedRecipe">
+        <a class="recipe" ui-sref="recipe-view({recipeID : 'banana'})"><img class = "recipe" ng-src = "img/{{recipe.images[0]}}"/>
+          <p>Name: {{recipe.name}}</p>
+          <p>Uploaded by: {{recipe.author}}</p>
+          <p>Likes:{{recipe.likes}}</p>
+        </a>
+      </div>
+    </section>
+
+</div>
