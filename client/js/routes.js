@@ -43,7 +43,16 @@ app.config(($stateProvider,$urlRouterProvider)=>{
   .state('recipe-view', {
     url : '/recipe/:recipeID',
     templateUrl : '/views/recipe-view.html',
-    params : { recipeID : null}
+    resolve : {
+      getRecipe : function($http,$stateParams){
+        return $http.get('/recipe/'+$stateParams.recipeID);
+      }
+    },
+    controller : function(getRecipe) {
+      this.recipe = getRecipe.data;
+    },
+    controllerAs : 'recipeViewCtrl'
+
   })
 
   .state('user', {

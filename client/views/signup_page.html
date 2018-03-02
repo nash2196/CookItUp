@@ -8,32 +8,23 @@
   <div class="header-bar"><a href="index.html" style="color:white; text-decoration:none">Cook It Up</a></div>&nbsp; -->
   <div class="header-bar" ng-controller="HeaderController as headCtrl">
     <a ui-sref="home" style="color:white; text-decoration:none">Cook It Up</a>
-    <span class="header-bar" ng-hide="{{headCtrl.loggedIn}}"><a ui-sref="login">
-      <button class="header-bar">Login</button></a>
-      <a ui-sref="signup">
-        <button class="header-bar">Sign Up</button></a>
-      </span>
-
-      <span class="header-bar" ng-show="{{headCtrl.loggedIn}}">
-        <a href="user_profile.html"><img class="header-bar" src="img/user_profile.png"/></a>
-        <button class="header-bar">Logout</button>
-      </span>
   </div>
+
   <center>
-    <div class="container">
+
     <img src="img/signup.png" width="100px" height="100px"></img>
       <form name="signup" action="">
         <label>Enter your email id:</label>
         <input type="text" id="id" placeholder="Enter your email-id" required><br/><br/>
-        <label>Enter your name:&nbsp;&nbsp;&ensp;  </label>
+        <label>Enter your name:&nbsp;&nbsp;&ensp;</label>
         <input type="text" id="name" placeholder="Enter your name" required><br/><br/>
-        <label>Enter password:&ensp;&ensp;&nbsp;     </label>
+        <label>Enter password:&ensp;&ensp;&nbsp; </label>
         &nbsp; <input type="password" id="pwd" placeholder="Enter password" required><br/><br/>
-        <label>Confirm password:   </label>
+        <label>Confirm password:                 </label>
         &nbsp;&nbsp;<input type="password" id="confirmpwd" placeholder="Re-write your password" required><br/><br/>
         <button class="body-btn">Sign Up</button>
       </form>
-      <div>
+
     </center>
 <!--
   </body>

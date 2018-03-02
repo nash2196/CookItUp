@@ -37,8 +37,8 @@
         <div style="width:{{pic.progress}}%" ng-bind="pic.progress + '%'"></div>
   </span>
 
-  <span ng-show="pic.result">Done!</span>
-  <span ng-show="mediaCtrl.errorMsg">OOPS! {{mediaCtrl.errorMsg}}</span>
+  <span style="color:green;" ng-show="pic.result">Done!</span>
+  <span style="color:green;" ng-show="mediaCtrl.errorMsg">OOPS! {{mediaCtrl.errorMsg}}</span>
 
 
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<label for="video">Upload Video:</label>&ensp;<input type="file" name="video" ng-model="video" ngf-select ngf-accept="'video/*'">
@@ -47,8 +47,8 @@
       <div style="width:{{video.progress}}%" ng-bind="video.progress + '%'"></div>
     </span>
 
-    <span ng-show="video.result">Done!</span>
-    <span ng-show="mediaCtrl.errorMsg">OOPS! {{mediaCtrl.errorMsg}}</span>
+    <span style="color:green;" ng-show="video.result">Done!</span>
+    <span style="color:red;" ng-show="mediaCtrl.errorMsg">OOPS! {{mediaCtrl.errorMsg}}</span>
 
 </span><br><br>
 <!-- <script>

@@ -106,9 +106,18 @@ app.controller('IngrController', function($http, valueService) {
         }
       };
 
-      // this.final = function(){
-      //   console.log(valueService.getIngr());
-      // }
+      this.selected = valueService.getIngr();
+      console.log(this.selected);
+      this.detail = null;
+
+      this.selectDetail = function (type){
+        this.detail=type;
+      };
+
+      this.detailsIsSelected = function(type){
+        return this.detail===type;
+      }
+
 });
 
 
@@ -116,8 +125,8 @@ app.controller('MealController',function($http, valueService){
 
       //retrieve meal types and cuisine types
       $http.get('/meals').then((response) => {
-        this.meal = response.data.meals;
-        this.cuisine = response.data.cuisines;
+        this.meal = response.data.meals.meals;
+        this.cuisine = response.data.cuisines.cuisines;
       });
 
 
@@ -139,11 +148,10 @@ app.controller('RecipeController',function($http, valueService){
     this.recipes = response.data;
   });
   // this.recipes = recipes;
-  this.selectedRecipe = [];
+  var selectedRecipe = [];
   this.ingredients = valueService.getIngr();
 
   this.showRecipe = () => {
-    this.selectedRecipe = [];
     console.log(this.ingredients);
 
     if(this.ingredients.length==0){
@@ -155,9 +163,9 @@ app.controller('RecipeController',function($http, valueService){
         if((meal !== null) && (cuisine !== null)) {
 
           for(var i=0;i<this.recipes.length;i++){
-            if(this.recipes[i].meal_type===meal && this.recipes[i].cuisine_type===cuisine){
-              this.selectedRecipe.push(this.recipes[i]);
-              console.log(this.selectedRecipe);
+            if(this.recipes[i].mealtype===meal && this.recipes[i].cuisinetype===cuisine){
+               selectedRecipe.push(this.recipes[i]);
+              console.log(selectedRecipe);
             };//end if
           }; //end for loop
 
@@ -165,8 +173,8 @@ app.controller('RecipeController',function($http, valueService){
       }else if(meal === null && cuisine !== null){
 
           for(var i=0;i<this.recipes.length;i++){
-            if(this.recipes[i].cuisine_type===cuisine){
-              this.selectedRecipe.push(this.recipes[i]);
+            if(this.recipes[i].cuisinetype===cuisine){
+              selectedRecipe.push(this.recipes[i]);
             }//end if
           }; //end for loop
 
@@ -174,8 +182,8 @@ app.controller('RecipeController',function($http, valueService){
       }else if(meal !== null && cuisine === null){
 
           for(var i=0;i<this.recipes.length;i++){
-            if(this.recipes[i].meal_type===meal){
-              this.selectedRecipe.push(this.recipes[i]);
+            if(this.recipes[i].mealtype===meal){
+              selectedRecipe.push(this.recipes[i]);
             }//end if
           }; //end for loop
         };
@@ -193,8 +201,8 @@ app.controller('RecipeController',function($http, valueService){
             // console.log("recipe ingr param: ",recipe_ingr);
 
             if(ingr==recipe_ingr && this.selectedRecipe.indexOf(this.recipes[j])<0){
-              this.selectedRecipe.push(this.recipes[j]);
-              console.log(this.selectedRecipe);
+              selectedRecipe.push(this.recipes[j]);
+              console.log(selectedRecipe);
             };//end if
           };//end loop3
         };//end loop2
@@ -202,7 +210,9 @@ app.controller('RecipeController',function($http, valueService){
 
     }
 
-  };
+  };//end showRecipe
+
+  this.selectedRecipe = selectedRecipe;
 
 });
 

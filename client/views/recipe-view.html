@@ -1,2 +1,25 @@
-<h1> Recipe</h1>
-<label>{{$stateParams.recipeID}}</label>
+<div class="header-bar">
+  <a ui-sref="home" style="color:white; text-decoration:none">Cook It Up</a>
+  <span class="header-bar" ng-hide="{{$stateParams.loggedIn}}"><a ui-sref="login">
+    <button class="header-bar">Login</button></a>
+    <a ui-sref="signup">
+      <button class="header-bar">Sign Up</button></a>
+    </span>
+
+    <span class="header-bar" ng-show="{{$stateParams.loggedIn}}">
+      <a ui-sref="user.profile({userID:'nishant'})"><img class="header-bar" src="img/user_profile.png"/></a>
+      <button class="header-bar" ng-click="loginCtrl.logout()">Logout</button>
+    </span>
+</div>
+<div class="container">
+<h3>{{recipeViewCtrl.recipe.recipe_name}}</h3>
+    <img ng-repeat="image in recipeViewCtrl.recipe.images" ng-src="img/{{image}}"/>
+  <div>
+    <b>Created By : </b><label>{{recipeViewCtrl.recipe.uploader}}</label>
+  </div>
+  <button class="body-btn">Likes:{{recipeViewCtrl.recipe.likes}}</button>
+  <div>
+    <label>Comments</label>
+    <input type="text" name="comment" placeholder="Share Your views"/>
+  </div>
+</div>

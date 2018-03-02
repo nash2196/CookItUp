@@ -11,25 +11,24 @@
       <button class="header-bar" ng-click="loginCtrl.logout()">Logout</button>
     </span>
 </div>
-
 <div class="floatleft">
-    <form class="homepage" name = "ingrForm" ng-controller = "IngrController as ingrCtrl" >
-      <p>Select your ingredients</p>
-      <details ng-repeat = "type in ingrCtrl.types">
-        <summary align="left">{{type.name}}</summary>
-        <label ng-repeat = "option in type.options">
-          <input type="checkbox" name = "selectIngr" value="{{option}}" ng-click="ingrCtrl.checkIngr(option)"/>{{option}}
-        </label>
-      </details>
+    <form class="homepage" name = "ingrForm" ng-controller = "IngrController as ingrCtrl">
+      <h5>Select your ingredients</h5><hr>
+      <p ng-hide="ingrCtrl.selected.length===0">You have selected : {{ingrCtrl.selected.join(",") }}</p>
+      <div ng-repeat = "type in ingrCtrl.types">
+        <label class="details" align="left" ng-click="ingrCtrl.selectDetail(type.type)" ng-style= "{'background-image' : 'url( /img/details/{{type.type}}.jpg)'}">{{type.type | uppercase}}</label>
+        <div class="summary" ng-show="ingrCtrl.detailsIsSelected(type.type)">
+          <label ng-repeat = "option in type.options">
+            <input type="checkbox" name = "selectIngr" value="{{option}}" ng-click="ingrCtrl.checkIngr(option.ingredient_name)">{{option.ingredient_name}}</input>
+          </label>
+        </div>
+      </div>
       <!-- <center><button class="header-bar" >Search</button></center> -->
     </form>
 </div>
-
-
 <div class="floatright">
     <form class="homepage" name = "mealForm" ng-controller = "MealController as mealCtrl">
       <label>Select meal type:</label>
-
       <Select ng-model="meal_model" ng-options = "type for type in mealCtrl.meal" ng-change="mealCtrl.selectMeal(meal_model)">
         <option value="" >--Select Meal Type--</option>
       </Select>&ensp;&ensp;&ensp;&ensp;
@@ -41,16 +40,15 @@
       &ensp;
     </form>
 
-
     <section ng-controller = "RecipeController as recipeCtrl">
-      <button class="search" ng-click = "recipeCtrl.showRecipe()">Show Recipe</button>
-      <div ng-repeat = "recipe in recipeCtrl.selectedRecipe">
-        <a class="recipe" ui-sref="recipe-view({recipeID : 'banana'})"><img class = "recipe" ng-src = "img/{{recipe.images[0]}}"/>
-          <p>Name: {{recipe.name}}</p>
-          <p>Uploaded by: {{recipe.author}}</p>
+
+      <div class="mainSearch" ng-click = "recipeCtrl.showRecipe()">Let's Go!</div>
+      <div class="recipe" ng-repeat = "recipe in recipeCtrl.selectedRecipe">
+        <a class="recipe" ui-sref="recipe-view({recipeID : recipe.recipe_name })">
+          <p>Name: {{recipe.recipe_name}}</p>
+          <p>Uploaded by: {{recipe.uploader}}</p>
           <p>Likes:{{recipe.likes}}</p>
         </a>
       </div>
     </section>
-
 </div>

@@ -5,8 +5,12 @@ var multipart = require('connect-multiparty');
 var uuidv4 = require('uuid/v4');
 var multipartMiddleware = multipart();
 var app = express();
+let mongoUtil=require('./mongoUtil');
+var path=require('path');
+var fs=require('fs');
+var mongoose = require('mongoose');
 
-app.use(express.static(__dirname + "/client"));
+app.use(express.static(path.join(__dirname, '/../client')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(session({
@@ -19,50 +23,48 @@ var _session;
 var loggedIn = false;
 
 app.get('/types', function(request,response){
-  var types = [
-    {name:'Dairy', options: ['Milk','Butter','Cheese']},
-    {name:'Vegetables', options: ['Onion','Tomato','Garlic']},
-    {name:'Fruits', options: ['Banana','Apple','Orange']}
-  ];
-  response.send(types);
+  mongoose.model('types').find(function(err,types){
+    response.send(types);
+  });
 });
 
 
 app.get('/meals', function(request,response){
-    var meal_type = ['Breakfast','Lunch','Dinner'];
-    var cuisine_type = ['Indian','Italian','Mexican'];
-
-  response.send({meals:meal_type , cuisines:cuisine_type});
+    mongoose.model('meals').find(function(err,docs) {
+      response.send({meals:docs[0],cuisines:docs[1]});
+  });
 });
 
 app.get('/recipes', function(request,response){
-
-  var recipes = [
-    {
-      id: "OTC",
-      name: "Onion Tomato Curry",
-      ingredients: ["Onion","Tomato"],
-      images: ["recipe1-img1.jpeg","recipe1-img2.jpeg"],
-      meal_type: "Lunch",
-      cuisine_type: "Indian",
-      author: "Aditya Patel",
-      likes: 10
-    },
-
-    {
-      id: "BS",
-      name: "Banana Shake",
-      ingredients: ["Milk","Banana"],
-      images: ["recipe2-img1.jpeg","recipe2-img2.jpeg"],
-      meal_type: "Breakfast",
-      cuisine_type: "Italian",
-      author: "Maitri Baria",
-      likes: 20
-    }
-  ];
-
-  response.send(recipes);
+    mongoose.model('recipes').find(function(err,recipes){
+      console.log(recipes);
+      response.send(recipes);
+    });
 });
+
+
+app.get('/recipe/:recipeID', function(request,response) {
+    var recipeID = request.params.recipeID;
+    console.log(recipeID);
+    mongoose.model('recipes').findOne({recipe_name : recipeID},function(err,recipe){
+      if(err){
+        response.status(404).send("Not found");
+      }
+      response.send(recipe);
+    });
+
+  //   for(i=0 ; i<recipes.length;i++) {
+  //     console.log("recipeID search param ",recipes[i].id);
+  //     if(recipes[i].id === recipeID){
+  //         response.send(recipes[i]);
+  //         break;
+  //     }else{
+  //       if(i==recipes.length) response.status(404).send("Not found");
+  //   }
+  // };
+
+});
+
 
 app.get('/login',function(request,response){
   console.log("GET recieved");
