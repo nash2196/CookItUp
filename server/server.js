@@ -1,5 +1,6 @@
 var express = require('express');
 var session = require('express-session')
+var jwt = require('jsonwebtoken');
 var bodyParser = require('body-parser');
 var multipart = require('connect-multiparty');
 var uuidv4 = require('uuid/v4');
@@ -13,13 +14,13 @@ var mongoose = require('mongoose');
 app.use(express.static(path.join(__dirname, '/../client')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(session({
-  secret:'abcdefgh1234',
-  resave: false,
-  saveUninitialized: true}));
+// app.use(session({
+//   secret:'abcdefgh1234',
+//   resave: false,
+//   saveUninitialized: true}));
 
 
-var _session;
+var secret = "cookitup";
 var loggedIn = false;
 
 app.get('/types', function(request,response){
@@ -37,7 +38,6 @@ app.get('/meals', function(request,response){
 
 app.get('/recipes', function(request,response){
     mongoose.model('recipes').find(function(err,recipes){
-      console.log(recipes);
       response.send(recipes);
     });
 });
@@ -52,45 +52,79 @@ app.get('/recipe/:recipeID', function(request,response) {
       }
       response.send(recipe);
     });
-
-  //   for(i=0 ; i<recipes.length;i++) {
-  //     console.log("recipeID search param ",recipes[i].id);
-  //     if(recipes[i].id === recipeID){
-  //         response.send(recipes[i]);
-  //         break;
-  //     }else{
-  //       if(i==recipes.length) response.status(404).send("Not found");
-  //   }
-  // };
-
 });
 
+app.post('/recipe/comment',function (request,response) {
+    var recipeID = request.body.recipeID;
+    var comment = request.body.comment;
+    var userid = request.body.userID;
 
-app.get('/login',function(request,response){
-  console.log("GET recieved");
-  if(loggedIn===true){
-    var username = _session.name;
-    response.status(200).send(username);
-  }else{
-    response.status(400).send("Error");
-  }
+    if(recipeID == null || recipeID == '' || userid == null || userid == '' || comment == null || comment == ''){
+      console.log("Something undefined ",recipeID,userid,comment);
+      response.json({success : false});
+    }else {
+      console.log("Trying to write ");
+      mongoose.model('recipes').findOneAndUpdate({"recipe_name":recipeID},{$push : {"comments" : {"body" : comment, "userid" : userid}}},{returnNewDocument: true},
+      function (err,changed) {
+        if (err){
+          console.log("error : ",err);
+          response.json({success : false});
+        }else {
+          console.log("changed : ",changed);
+          response.json({success : true});
+        }
+      });
+
+    }
 });
 
 app.post('/login',function(request,response){
-      console.log("POST recieved");
-    _session = request.session;
 
+    var user = mongoose.model('users');
+
+    console.log("POST recieved");
     console.log(request.body);
-    if(request.body.pswd==='1'){
-      _session.name = request.body.email;
-      loggedIn = true;
-      response.status(200).send("Success");
-    }else{
-      loggedIn = false;
-      response.status(400).send("Error");
-    }
+
+    user.findOne({userid : request.body.email}).select('name userid password').exec(function(err,user) {
+      if(err) throw err;
+
+      if(!user){
+        response.json({success : false, message : 'No user found'});
+      }else if(user){
+        var validPswd = user.comparePassword(request.body.pswd);
+        if(!validPswd){
+          response.json({success : false, message : 'Invalid password'});
+        }else{
+          var token = jwt.sign({ username : user.name, email : user.userid},secret,{expiresIn : '1h'});
+          response.json({success : true, message : 'User authenticated', name : user.name, token : token});
+        }
+      }
+    });
 
 });
+
+
+app.use(function(request,response,next) {
+  var token = request.body.token || request.body.query || request.headers['x-access-token'];
+
+  if(token){
+    jwt.verify(token, secret, function (err,decoded) {
+      if (err) {
+        response.json({success : false, message : "Token invalid"});
+      }else {
+        request.decoded = decoded;
+        next();
+      };
+    });
+  }else{
+    response.json({success:false, message : "No token recieved"});
+  }
+});
+
+app.post('/user',function (request,response) {
+  response.send(request.decoded);
+});
+
 
 
 app.post('/upload/pic',multipartMiddleware, function(request,response){

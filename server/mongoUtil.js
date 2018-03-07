@@ -19,8 +19,36 @@ mongoose.model('types', ingredients);
 var mealCuisineType=new schema({},{collection:'mealcuisinetype'});
 mongoose.model('meals', mealCuisineType);
 
-var recipes=new schema({},{collection:'recipes'});
-mongoose.model('recipes',recipes);
+
+var recipeSchema=new schema({
+  "recipe_name" : String,
+  "ingredients" : [String],
+  "method" : String,
+  "likes" : Number,
+  "ratings" : Number,
+  "comments" : [{"body" : String, "userid" : String}],
+  "date" : [{"type" : Date, default : Date.now }],
+  "mealtype" : String,
+  "cuisinetype" : String,
+  "uploader" : String
+
+},{collection:'recipes'});
+mongoose.model('recipes',recipeSchema);
+
+
+
+var userSchema = new schema({
+  "name" : String,
+  "userid" : String,
+  "password" :String
+},{collection:'users'});
+userSchema.methods.comparePassword = function(password) {
+  return password===this.password;
+};
+mongoose.model('users',userSchema);
+
+
+
   //ingredient.methods.findAll = function(cb) {
 //  return this.model('ingredient').find(, cb);
 //};

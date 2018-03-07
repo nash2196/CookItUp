@@ -1,25 +1,35 @@
-<div class="header-bar">
-  <a ui-sref="home" style="color:white; text-decoration:none">Cook It Up</a>
-  <span class="header-bar" ng-hide="{{$stateParams.loggedIn}}"><a ui-sref="login">
-    <button class="header-bar">Login</button></a>
-    <a ui-sref="signup">
-      <button class="header-bar">Sign Up</button></a>
-    </span>
-
-    <span class="header-bar" ng-show="{{$stateParams.loggedIn}}">
-      <a ui-sref="user.profile({userID:'nishant'})"><img class="header-bar" src="img/user_profile.png"/></a>
-      <button class="header-bar" ng-click="loginCtrl.logout()">Logout</button>
-    </span>
-</div>
 <div class="container">
 <h3>{{recipeViewCtrl.recipe.recipe_name}}</h3>
-    <img ng-repeat="image in recipeViewCtrl.recipe.images" ng-src="img/{{image}}"/>
+    <img ng-repeat="photo in recipeViewCtrl.recipe.photos" ng-src="img/{{photo}}"/>
   <div>
     <b>Created By : </b><label>{{recipeViewCtrl.recipe.uploader}}</label>
   </div>
-  <button class="body-btn">Likes:{{recipeViewCtrl.recipe.likes}}</button>
+  <button class="like-btn">Likes:{{recipeViewCtrl.recipe.likes}}</button>
   <div>
+    <b>Ingredients used : </b><label><i>{{recipeViewCtrl.recipe.ingredients.join(",")}}</i></label>
+  </div>
+  <div>
+    <b>Preparation Method : </b>
+    <ul>
+      <li ng-repeat = "step in recipeViewCtrl.recipe.method">{{step}}</li>
+    </ul>
+  </div>
+
+  <!-- Comments -->
+  <div class="container">
     <label>Comments</label>
-    <input type="text" name="comment" placeholder="Share Your views"/>
+    <div class="comments">
+      <ul>
+        <li ng-repeat = "comment in recipeViewCtrl.recipe.comments">
+          <label><b>{{comment.userid}}</b> : {{comment.body}}</label>
+        </li>
+      </ul>
+    </div>
+    <label ng-show="mainCtrl.isLoggedIn"><b>{{mainCtrl.userid}}</b> : </label>
+    <input class="comments" type="text" ng-model="recipeViewCtrl.userComment" placeholder="Share Your views"/>
+    <button ng-click="recipeViewCtrl.recipe.addComment(mainCtrl.userid,recipeViewCtrl.userComment)" class="comment-btn">Submit</button>
+    <label ng-show="recipeViewCtrl.commentSuccess">Done!</label>
+    <label ng-show="recipeViewCtrl.commentError">Error!<label>
+
   </div>
 </div>

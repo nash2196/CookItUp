@@ -1,16 +1,3 @@
-<div class="header-bar">
-  <a ui-sref="home" style="color:white; text-decoration:none">Cook It Up</a>
-  <span class="header-bar" ng-hide="{{$stateParams.loggedIn}}"><a ui-sref="login">
-    <button class="header-bar">Login</button></a>
-    <a ui-sref="signup">
-      <button class="header-bar">Sign Up</button></a>
-    </span>
-
-    <span class="header-bar" ng-show="{{$stateParams.loggedIn}}">
-      <a ui-sref="user.profile({userID:'nishant'})"><img class="header-bar" src="img/user_profile.png"/></a>
-      <button class="header-bar" ng-click="loginCtrl.logout()">Logout</button>
-    </span>
-</div>
 <div class="floatleft">
     <form class="homepage" name = "ingrForm" ng-controller = "IngrController as ingrCtrl">
       <h5>Select your ingredients</h5><hr>
@@ -42,7 +29,7 @@
 
     <section ng-controller = "RecipeController as recipeCtrl">
 
-      <div class="mainSearch" ng-click = "recipeCtrl.showRecipe()">Let's Go!</div>
+      <div class="mainSearch" ng-click = "recipeCtrl.searchRecipe()">Let's Go!</div>
       <div class="recipe" ng-repeat = "recipe in recipeCtrl.selectedRecipe">
         <a class="recipe" ui-sref="recipe-view({recipeID : recipe.recipe_name })">
           <p>Name: {{recipe.recipe_name}}</p>

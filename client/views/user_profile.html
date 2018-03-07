@@ -1,34 +1,12 @@
-<!-- <html ng-app = 'MainApp'>
-<head>
-<link class="jsbin" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
-<script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-<script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="css/style1.css" type="text/css">
-<meta charset=utf-8 />
 
-</head>
-<body>
-  <script type = "text/javascript" src="js/ng-file-upload/dist/ng-file-upload-shim.min.js"></script>
-  <script type = "text/javascript" src="js/angular/angular.min.js"></script>
-  <script type = "text/javascript" src="js/ng-file-upload/dist/ng-file-upload.min.js"></script>
-  <script type = "text/javascript" src="js/@uirouter/angularjs/release/angular-ui-router.min.js"></script>
-  <script type = "text/javascript" src="js/menu.js"></script>
-  <script type = "text/javascript" src="js/routes.js"></script>
-  <script type = "text/javascript" src="js/app.js"></script> -->
-
-
-<div class="header-bar"><a ui-sref="home" style="color:white; text-decoration:none">Cook It Up</a>&nbsp;
-<button class="header-bar" ng-click="loginCtrl.logout()">Logout</button>
-</div>
 <div  class="tabs">
   <ul class="nav">
     <li ng-class="{ active:tab.isSet(1) }" ng-click="tab.setTab(1)" ui-sref="user.profile">Profile</li>
-    <li ng-class="{ active:tab.isSet(2) }" ng-click="tab.setTab(2)" ui-sref="home({loggedIn:true})">Search Recipes</li>
+    <li ng-class="{ active:tab.isSet(2) }" ng-click="tab.setTab(2)" ui-sref="home">Search Recipes</li>
     <li ng-class="{ active:tab.isSet(3) }" ng-click="tab.setTab(3)" ui-sref="user.fav">Favorite Recipes</li>
     <li ng-class="{ active:tab.isSet(4) }" ng-click="tab.setTab(4)" ui-sref="user.add">Add a Recipe</li>
     <li ng-class="{ active:tab.isSet(5) }" ng-click="tab.setTab(5)" ui-sref="user.edit">Edit Profile</li>
   </ul>
-
   <div class="content">
     <div ui-view></div>
   </div>
@@ -98,25 +76,3 @@
 .tabs .content p { padding-left: 20px; }
 
 </style>
-
-<!-- <script>
-$(function() {
-  $('.tabs nav a').on('click', function() {
-    show_content($(this).index());
-  });
-
-  show_content(0);
-
-  function show_content(index) {
-    // Make the content visible
-    $('.tabs .content.visible').removeClass('visible');
-    $('.tabs .content:nth-of-type(' + (index + 1) + ')').addClass('visible');
-
-    // Set the tab to selected
-    $('.tabs nav a.selected').removeClass('selected');
-    $('.tabs nav a:nth-of-type(' + (index + 1) + ')').addClass('selected');
-   }
-});
-</script>
-</body>
-</html>-->

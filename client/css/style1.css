@@ -1,4 +1,4 @@
-div.header-bar {
+/* div.header-bar {
     display: block;
     color: white;
     background-color: black;
@@ -8,12 +8,7 @@ div.header-bar {
     text-decoration: none;
     font-family: Palatino;
 
-}
-
-summary{
-  font-size: 20px;
-  transition: 0.5s;
-}
+} */
 
 * {
     box-sizing: border-box;
@@ -56,7 +51,7 @@ input[type=submit]:hover {
     width: inherit;
     border:1px solid #ccc;
     border-radius: 5px;
-    background-color: rgba(240,240,240,0.5);
+    background-color: rgb(240,240,240);
     padding: 20px;
 }
 
@@ -94,4 +89,58 @@ form .progress {
 .body-btn:hover {
     background-color: #4CAF50; /* Green */
     color: white;
+}
+
+div .comments{
+  display: block;
+  /* font-size: 15px; */
+  border-bottom: 0.5px dashed grey;
+  border-radius: 10px;
+  width: 70vw;
+}
+.comments ul{
+  padding: 0px;
+}
+.comments li{
+  list-style-type: none;
+  padding: 5px;
+}
+
+.comments label{
+  display: inline;
+  font-size: 18px;
+  margin: 5px;
+  padding: 10px;
+}
+input.comments {
+  display: inline;
+  margin: 5px;
+  padding: 10px;
+  border: 1px solid;
+  border-radius: 10px;
+
+}
+
+.like-btn .ng-dirty{
+  color: red;
+}
+.like-btn:hover {
+    background-color: red; /* Green */
+    color: white;
+}
+
+.comment-btn {
+  border: 1px solid;
+  border-radius: 20px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 15px;
+  background: #56b05c;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+
+.comment-btn:hover {
+  background: #48d900;
+  text-decoration: none;
 }

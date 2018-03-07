@@ -1,7 +1,23 @@
-div.header-bar {
+
+div.header{
+  display: block;
+  position: relative;
+  background-image: url("/img/backgrnd2.jpg");
+  min-height: 450px;
+  min-width: 100vh;
+  /* Create the parallax scrolling effect */
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+div.header-bar{
+  bottom: 0;
+  position: relative;
+  min-width: inherit;
   display: block;
   color: white;
-  background-color: black;
   text-align:justified;
   padding: 25px 16px;
   font-size: 36px;
@@ -11,18 +27,35 @@ div.header-bar {
 }
 
 
+.header-bar img{
+  float: left;
+  width: 400px;
+  height: 150px;
+}
 span.header-bar{
+  margin-top:  55px;
+  position: relative;
   float: right;
 }
+p.header-bar {
+  text-decoration: none;
+  color: #ffffff;
+  display:inline;
+  margin: 5px;
+  font-size: 20px;
+}
 
-img.header-bar{
-
+img.header-icon{
+  float: left;
+  position: relative;
+  display: inline;
+  margin-left: 10px;
   width: 50px;
   height: 50px;
 }
 
 button.header-bar {
-  float:right;
+  float: right;
   border-right: 1px solid #bbb;
   background-color: white;
   border: 1px solid black;
@@ -176,6 +209,7 @@ label.details {
   width: inherit;
   padding: 12px;
   height: 80px;
+  border: 1px solid;
   color: white;
   font-size: 25px;
   text-align:center;
@@ -184,4 +218,15 @@ label.details {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: left;
+}
+
+div .summary{
+  font-size: 20px;
+}
+
+.success{
+    color: #4CAF50;
+}
+.error{
+  color : #FF0000;
 }
