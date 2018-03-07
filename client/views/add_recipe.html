@@ -38,9 +38,9 @@
       <hr>
        <label>Select your ingredients</label>
        <details ng-repeat = "type in ingrCtrl.types">
-         <summary align="left">{{type.name}}</summary>
+         <summary align="left">{{type.type}}</summary>
          <label ng-repeat = "option in type.options">
-           <input type="checkbox" name = "selectIngr" value="{{option}}" ng-click="ingrCtrl.checkIngr(option)"/>{{option}}
+           <input type="checkbox" name = "selectIngr" value="{{option.ingredient_name}}" ng-click="ingrCtrl.checkIngr(option.ingredient_name)"/>{{option.ingredient_name}}
          </label>
        </details>
 
