@@ -6,7 +6,7 @@
         <label class="details" align="left" ng-click="ingrCtrl.selectDetail(type.type)" ng-style= "{'background-image' : 'url( /img/details/{{type.type}}.jpg)'}">{{type.type | uppercase}}</label>
         <div class="summary" ng-show="ingrCtrl.detailsIsSelected(type.type)">
           <label ng-repeat = "option in type.options">
-            <input type="checkbox" name = "selectIngr" value="{{option}}" ng-click="ingrCtrl.checkIngr(option.ingredient_name)">{{option.ingredient_name}}</input>
+            <input type="checkbox" name = "selectIngr" value="{{option.ingredient_name}}" ng-click="ingrCtrl.checkIngr(option.ingredient_name)">{{option.ingredient_name}}</input>
           </label>
         </div>
       </div>

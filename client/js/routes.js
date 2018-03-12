@@ -27,10 +27,15 @@ app.config(($stateProvider,$urlRouterProvider)=>{
     resolve : {
       getRecipe : function($http,$stateParams){
         return $http.get('/recipe/'+$stateParams.recipeID);
+      },
+      getImages : function($http,$stateParams){
+        return $http.get('/images/'+$stateParams.recipeID);
       }
     },
-    controller : function($http,$timeout,getRecipe,$state) {
+    controller : function($http,$timeout,$state,getRecipe,getImages) {
       this.recipe = getRecipe.data;
+      this.recipe.image = "data:image/jpg;base64,"+getImages.data;
+      // console.log(this.recipe.image);
       this.commentSuccess=false;
       this.commentError=false;
       this.recipe.addComment = (userid,comment) => {
@@ -47,6 +52,8 @@ app.config(($stateProvider,$urlRouterProvider)=>{
            };
          });
       };
+
+
     },
     controllerAs : 'recipeViewCtrl'
 

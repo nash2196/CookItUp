@@ -1,6 +1,5 @@
-
 <div class="container">
-<form name="addRecipeForm" ng-controller="MediaController as mediaCtrl" ng-submit="mediaCtrl.uploadData(addRecipeForm)">
+<form name="addRecipeForm" ng-controller="FormController as formCtrl" ng-submit="formCtrl.uploadData(addRecipeForm,mainCtrl.userid)">
 <span>
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<img id="blah" ngf-thumbnail="pic || 'img/addrecipe.png'" style="width:200px;height:150px;border:double; border-radius:4px;"/>
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
@@ -11,23 +10,23 @@
 </video></br></br>
 
   <label for="pic">Upload Photo:</label>&ensp;<input type='file' ng-model="pic" name="pic" ngf-select ngf-accept="'image/*'">
-  <button class="body-btn" ng-click="mediaCtrl.uploadPic(pic)">Upload</button>
-  <span class="progress" ng-show="!mediaCtrl.errorMsg && pic.progress >= 0">
+  <button class="body-btn" ng-click="formCtrl.uploadPic(pic)">Upload</button>
+  <span class="progress" ng-show="!pic.errorMsg && pic.progress >= 0">
         <div style="width:{{pic.progress}}%" ng-bind="pic.progress + '%'"></div>
   </span>
 
   <span style="color:green;" ng-show="pic.result">Done!</span>
-  <span style="color:green;" ng-show="mediaCtrl.errorMsg">OOPS! {{mediaCtrl.errorMsg}}</span>
+  <span style="color:red;" ng-show="pic.errorMsg">OOPS! {{pic.errorMsg}}</span>
 
 
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<label for="video">Upload Video:</label>&ensp;<input type="file" name="video" ng-model="video" ngf-select ngf-accept="'video/*'">
-  <button class="body-btn" ng-click="mediaCtrl.uploadPic(video)">Upload</button>
-    <span class="progress" ng-show="!mediaCtrl.errorMsg && video.progress >= 0">
+  <button class="body-btn" ng-click="formCtrl.uploadPic(video)">Upload</button>
+    <span class="progress" ng-show="!video.errorMsg && video.progress >= 0">
       <div style="width:{{video.progress}}%" ng-bind="video.progress + '%'"></div>
     </span>
 
     <span style="color:green;" ng-show="video.result">Done!</span>
-    <span style="color:red;" ng-show="mediaCtrl.errorMsg">OOPS! {{mediaCtrl.errorMsg}}</span>
+    <span style="color:red;" ng-show="video.errorMsg">OOPS! {{video.errorMsg}}</span>
 
 </span><br><br>
 
@@ -40,12 +39,11 @@
        <details ng-repeat = "type in ingrCtrl.types">
          <summary align="left">{{type.type}}</summary>
          <label ng-repeat = "option in type.options">
-           <input type="checkbox" name = "selectIngr" value="{{option.ingredient_name}}" ng-click="ingrCtrl.checkIngr(option.ingredient_name)"/>{{option.ingredient_name}}
+             <input type="checkbox" ng-model="addRecipeForm.selectedIngr[option.ingredient_name]" ng-true-value="'Y'" ng-false-value = "'N'" />{{option.ingredient_name}}
          </label>
        </details>
-
+       {{addRecipeForm.selectedIngr}}
        <hr>
-
 </span>
 
      <label for = "Method">Method:</label>
@@ -58,15 +56,19 @@
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="text" ng-model="addRecipeForm.taste" placeholder="Level of Taste eg:mild/spicy,etc."></br></br>
 <span ng-controller = "MealController as mealCtrl">
      <label>Select meal type:</label>
-&ensp;&ensp;&ensp;&ensp;<Select ng-model="meal_model" ng-options = "type for type in mealCtrl.meal" ng-change="mealCtrl.selectMeal(meal_model)">
+&ensp;&ensp;&ensp;&ensp;<Select ng-model="addRecipeForm.selectMeal" ng-options = "type for type in mealCtrl.meal" >
         <option value="" >--Select Meal Type--</option>
     </Select>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
       <label>Select cuisine type:</label>
-&ensp;&ensp;<Select ng-model="cuisine_model"  ng-options = "type for type in mealCtrl.cuisine" ng-change="mealCtrl.selectCuisine(cuisine_model)">
+&ensp;&ensp;<Select ng-model="addRecipeForm.selectCuisine"  ng-options = "type for type in mealCtrl.cuisine">
         <option value="" > -- Select Cuisine Type --></option>
       </Select></br></br></br>
       <center><input type="submit" name="button" value="Add"></center>
 </span>
+
+
+<label class="success" ng-show"formCtrl.successMsg">{{formCtrl.successMsg}}</label>
+<label class="error" ng-show="formCtrl.errorMsg">{{formCtrl.errorMsg}}</label>
 </form>
 
 </div>

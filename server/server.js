@@ -11,6 +11,10 @@ var path=require('path');
 var fs=require('fs');
 var mongoose = require('mongoose');
 var grid=require('gridfs-stream');
+grid.mongo=mongoose.mongo;
+
+
+
 var recipes=mongoose.model('recipes');
 
 
@@ -48,7 +52,7 @@ app.get('/recipes', function(request,response){
 
 app.get('/recipe/:recipeID', function(request,response) {
     var recipeID = request.params.recipeID;
-    console.log(recipeID);
+    // console.log(recipeID);
     mongoose.model('recipes').findOne({recipe_name : recipeID},function(err,recipe){
       if(err){
         response.status(404).send("Not found");
@@ -81,6 +85,62 @@ app.post('/recipe/comment',function (request,response) {
     }
 });
 
+app.get('/images/:recipeID',function(request,response){
+
+  var gfs=grid(mongoose.connection.db);
+  var photo_id,images;
+  // console.log("Get Image ");
+  recipes.findOne({recipe_name:request.params.recipeID},'photos',function (err,recipe) {
+    if (err) {
+      console.log("error in finding recipe");
+      throw err;
+    }
+    photo_id = recipe.photos[0];
+    console.log(photo_id);
+
+    if (photo_id) {
+      gfs.files.find({"metadata.recipeid":photo_id}).toArray(function (err, files) {
+        if (err) {
+          throw err;
+        };
+
+        if(files.length===0){
+          return response.json({success : false,message: 'File not found'});
+        };
+
+        // console.log(files);
+        // for (var i = 0; i < files.length; i++) {
+        //res.writeHead(200, {'Content-Type': files[0].contentType});
+        var readstream = gfs.createReadStream({
+          filename : files[0].filename
+        });
+
+        readstream.on('data', function(data) {
+          // console.log("writing to images");
+          images = data;
+        });
+
+        readstream.on('end', function() {
+          console.log("ending response");
+          response.send(images.toString('base64'));
+        });
+
+        readstream.on('error', function (err) {
+          console.log('An error occurred!');
+          throw err;
+        });
+        // }//end for
+      });
+    }else {
+      console.log("no photo_id");
+      response.send({success:false});
+    };
+
+  });
+
+  //var length=recipe.length;
+});
+
 app.post('/login',function(request,response){
 
     var user = mongoose.model('users');
@@ -98,7 +158,7 @@ app.post('/login',function(request,response){
         if(!validPswd){
           response.json({success : false, message : 'Invalid password'});
         }else{
-          var token = jwt.sign({ username : user.name, email : user.userid},secret,{expiresIn : '1h'});
+          var token = jwt.sign({ username : user.name, email : user.userid},secret,{expiresIn : '24h'});
           response.json({success : true, message : 'User authenticated', name : user.name, token : token});
         }
       }
@@ -128,87 +188,9 @@ app.post('/user',function (request,response) {
   response.send(request.decoded);
 });
 
-
-
 app.post('/upload/pic',multipartMiddleware, function(request,response){
     var uuid = null;
-
-    if(request.body.uuid===undefined){
-      var file = request.files.file;
-      uuid = uuidv4();
-      console.log(file.name);
-      console.log(file.type);
-      console.log(file.path);
-      console.log("generated: ",uuid);
-      response.send(uuid);
-  }else{
-    var file = request.files.file;
-    uuid = request.body.uuid;
-    console.log(file.name);
-    console.log(file.type);
-    console.log(file.path);
-    console.log("from request: ",request.body.uuid);
-    response.send(uuid);
-  }
-});
-
-app.post('/upload/data',function(request,response){
-
-  var formData = request.body;
-  formData.save()
-  .then(console.log("recipe saved!"));
-  //.catch(console.log("failed to save recipe!"));
-  //console.log("Name: ",formData.recipeName);
-  //console.log("ingredients: ",formData.ingredients);
-  //console.log("meal_type: ",formData.meal_type," cuisine_type: ",formData.cuisine_type);
-  response.send(formData.uuid);
-
-});
-
-app.listen(8181,function(){
-  console.log("http://localhost:8181");
-});
-
-
-
-app.get('/images',function(request,response){
-  var photos=recipes.find({_id:request.body},{photos:true,_id:false});
-  console.log(recipe);
-  //var length=recipe.length;
-  var images;
-  for (var i = 0; i < photos.length; i++) {
-    gfs.files.find({ _id:photos[i] }).toArray(function (err, files) {
-   	    if(files.length===0){
-  			return res.status(400).send({
-  				message: 'File not found'
-  			});
-      }
-
-      //res.writeHead(200, {'Content-Type': files[0].contentType});
-
-  		var readstream = gfs.createReadStream({
-  			  //filename: files[0].filename
-  		});
-
-  	    readstream.on('data', function(data) {
-  	        images[i]=write(data);
-  	    });
-
-  	    readstream.on('end', function() {
-  	      //  res.end();
-  	    });
-
-  		readstream.on('error', function (err) {
-  		  console.log('An error occurred!', err);
-  		  throw err;
-  		});
-  	});
-  }
-  response.send(images);
-});
-
-app.post('/upload/pic',multipartMiddleware, function(request,response){
-    var uuid = null;
+    var gfs=grid(mongoose.connection.db);
     if(request.body.uuid===undefined){
       //var file = request.files.file;
       uuid = uuidv4();
@@ -233,13 +215,14 @@ app.post('/upload/pic',multipartMiddleware, function(request,response){
     console.log(file);
     //conn.once('open',function(){
       //console.log("inside");
-       grid.mongo=mongoose.mongo;
-       var gfs=grid(conn.db);
-       var writestream=gfs.createWriteStream();
+    var writestream=gfs.createWriteStream({
+       filename : request.files.file.name,
+       metadata : {recipeid:uuid}
+    });
 
       fs.createReadStream(file).pipe(writestream);
-      writestream.on('close',function(){
-        console.log(" written to DB");
+      writestream.on('close',function(file){
+        console.log(file.filename+" written to DB");
       });
 
     //
@@ -257,4 +240,60 @@ app.post('/upload/pic',multipartMiddleware, function(request,response){
     // writeStream.write(file.data);
     // writeStream.end();
     response.send(uuid);
+});
+
+
+app.post('/upload/data',function(request,response){
+
+  var formData = request.body;
+  if (formData.uuid == null || formData.uuid == '') {
+    response.json({success : false, message : "Attach atleast one image/video"});
+  }else{
+    var recipe = new recipes({
+      recipe_name : formData.recipeName,
+      ingredients : formData.ingredients,
+      method : formData.method,
+      likes : 0,
+      ratings : 0,
+      comments : [],
+      photos : [formData.uuid],
+      videos : [formData.uuid],
+      date : "",
+      mealtype : formData.meal_type,
+      cuisinetype : formData.cuisine_type,
+      uploader : formData.uploader
+    });
+
+    recipe.save(function (err,recipe) {
+      if (err) {
+        console.log(err);
+        response.json({success : false, message : "could not add recipe"});
+      }
+      if (recipe) {
+        console.log(recipe);
+        response.json({success : true, message : "Recipe uploaded successfully"});
+      }else {
+        console.log("no docs affected");
+        response.json({success : false, message : "could not add recipe"});
+      }
+    });
+  }
+  // console.log(formData);
+  // formData.save()
+  // .then(console.log("recipe saved!"));
+  //.catch(console.log("failed to save recipe!"));
+  //console.log("Name: ",formData.recipeName);
+  //console.log("ingredients: ",formData.ingredients);
+  //console.log("meal_type: ",formData.meal_type," cuisine_type: ",formData.cuisine_type);
+  // response.send(formData.uuid);
+
+});
+
+
+
+
+
+
+app.listen(8181,function(){
+  console.log("http://localhost:8181");
 });

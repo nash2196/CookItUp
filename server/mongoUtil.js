@@ -27,6 +27,8 @@ var recipeSchema=new schema({
   "likes" : Number,
   "ratings" : Number,
   "comments" : [{"body" : String, "userid" : String}],
+  "photos" : [String],
+  "videos" : [String],
   "date" : [{"type" : Date, default : Date.now }],
   "mealtype" : String,
   "cuisinetype" : String,

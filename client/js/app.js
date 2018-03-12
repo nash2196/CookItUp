@@ -5,7 +5,7 @@ app.config(function ($httpProvider) {
 });
 
 app.controller('MainController',function(authService,$timeout,$state,$transitions){
-  var _this = this;
+
 
   $transitions.onStart({},() => {
     if(authService.isLoggedIn()) {
@@ -205,9 +205,11 @@ app.controller('RecipeController',function($http, valueService){
 
 });
 
-app.controller('MediaController', function(Upload,$http,$timeout,valueService){
+app.controller('FormController', function(Upload,$http,$timeout,$state,valueService){
 
   var uuid = null;
+  this.successMsg = null;
+  this.errorMsg = null;
 
   this.uploadPic = (file) => {
 
@@ -217,10 +219,10 @@ app.controller('MediaController', function(Upload,$http,$timeout,valueService){
       data: {file: file}
     }).then((response) => {
         file.result = uuid = response.data;
-
+        console.log(uuid);
     }, (response) => {
       if (response.status > 0){
-        this.errorMsg = response.status + ': ' + response.data;
+        file.errorMsg = response.status + ': ' + response.data;
       }
     }, (evt) => {
       file.progress = parseInt(100.0 * evt.loaded / evt.total);
@@ -237,7 +239,7 @@ app.controller('MediaController', function(Upload,$http,$timeout,valueService){
           file.result = uuid = response.data;
     }, (response) => {
       if (response.status > 0){
-        this.errorMsg = response.status + ': ' + response.data;
+        file.errorMsg = response.status + ': ' + response.data;
       }
     }, (evt) => {
       file.progress = parseInt(100.0 * evt.loaded / evt.total);
@@ -248,28 +250,43 @@ app.controller('MediaController', function(Upload,$http,$timeout,valueService){
   }
   };
 
-this.uploadData = (form) => {
+this.uploadData = (form,userid) => {
+  var ingredients = [];
+  var keys = Object.keys(form.selectedIngr);
+  for(var i=0; i<keys.length;i++){
+    if (form.selectedIngr[keys[i]] == 'Y')
+      ingredients.push(keys[i]);
+  };
 
+  // console.log("meal : ",this.selectMeal," cuisine : ",this.selectCuisine);
   var formData = {
     uuid:uuid,
     recipeName: form.recipeName,
-    ingredients:valueService.getIngr(),
-    meal_type:valueService.getMeal(),
-    cuisine_type:valueService.getCuisine(),
+    ingredients:ingredients,
+    meal_type:form.selectMeal,
+    cuisine_type:form.selectCuisine,
     method: form.method,
     time: form.time,
     serves: form.serve,
-    taste: form.taste
+    taste: form.taste,
+    uploader : userid
   };
 
   console.log(formData);
 
   $http.post('/upload/data',formData)
   .then((response) => {
-    console.log("Success! UUID:",response.data);
-  }, (response) => {
-   console.log("Error:",response.status,":::",response.data);
- });
+    if (response.data.success) {
+      this.successMsg = response.data.message;
+
+      $timeout(()=> {
+        this.successMsg = null;
+        $state.reload();
+      },3000);
+    }else {
+      this.errorMsg = response.data.message;
+    }
+  });
 };
 
 });
