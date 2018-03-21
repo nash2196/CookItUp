@@ -211,43 +211,73 @@ app.controller('FormController', function(Upload,$http,$timeout,$state,valueServ
   this.successMsg = null;
   this.errorMsg = null;
 
-  this.uploadPic = (file) => {
+  this.uploadPic = (files) => {
+    console.log(files," length:",files.length);
+    if (files && files.length){
+      if(uuid === null){
+        files.upload = Upload.upload({
+          url: '/upload/pic',
+          data: {files: files}
+        });
+      }else {
+        files.upload = Upload.upload({
+          url:'/upload/pic',
+          data: {files: files, uuid:uuid}
+        });
+      };
 
-    if(uuid === null){
-    file.upload = Upload.upload({
-      url: '/upload/pic',
-      data: {file: file}
-    }).then((response) => {
-        file.result = uuid = response.data;
+      files.upload.then((response) => {
+        files.result = uuid = response.data.uuid;
         console.log(uuid);
-    }, (response) => {
-      if (response.status > 0){
-        file.errorMsg = response.status + ': ' + response.data;
-      }
-    }, (evt) => {
-      file.progress = parseInt(100.0 * evt.loaded / evt.total);
-      $timeout(function() {
-        file.progress = -1;
-      },3000);
-    });
+      }, (response) => {
+        if (response.status > 0){
+          files.errorMsg = response.status + ': ' + response.data.message;
+        }
+      }, (evt) => {
+        files.progress = parseInt(100.0 * evt.loaded / evt.total);
+        $timeout(function() {
+          files.progress = -1;
+        },3000);
+      });
 
-  }else{
-    file.upload = Upload.upload({
-      url: '/upload/pic',
-      data: {file: file, 'uuid':uuid}
-    }).then((response) => {
-          file.result = uuid = response.data;
-    }, (response) => {
-      if (response.status > 0){
-        file.errorMsg = response.status + ': ' + response.data;
-      }
-    }, (evt) => {
-      file.progress = parseInt(100.0 * evt.loaded / evt.total);
-      $timeout(function() {
-        file.progress = -1;
-      },3000);
-    });
-  }
+    }
+
+  //   if(uuid === null){
+  //   file.upload = Upload.upload({
+  //     url: '/upload/pic',
+  //     data: {files: files}
+  //   }).then((response) => {
+  //       file.result = uuid = response.data;
+  //       console.log(uuid);
+  //   }, (response) => {
+  //     if (response.status > 0){
+  //       file.errorMsg = response.status + ': ' + response.data;
+  //     }
+  //   }, (evt) => {
+  //     file.progress = parseInt(100.0 * evt.loaded / evt.total);
+  //     $timeout(function() {
+  //       file.progress = -1;
+  //     },3000);
+  //   });
+  //
+  // }else{
+  //   file.upload = Upload.upload({
+  //     url: '/upload/pic',
+  //     data: {file: file, 'uuid':uuid}
+  //   }).then((response) => {
+  //         file.result = uuid = response.data;
+  //   }, (response) => {
+  //     if (response.status > 0){
+  //       file.errorMsg = response.status + ': ' + response.data;
+  //     }
+  //   }, (evt) => {
+  //     file.progress = parseInt(100.0 * evt.loaded / evt.total);
+  //     $timeout(function() {
+  //       file.progress = -1;
+  //     },3000);
+  //   });
+  // }
+
   };
 
 this.uploadData = (form,userid) => {

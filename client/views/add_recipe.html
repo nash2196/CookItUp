@@ -1,32 +1,35 @@
 <div class="container">
 <form name="addRecipeForm" ng-controller="FormController as formCtrl" ng-submit="formCtrl.uploadData(addRecipeForm,mainCtrl.userid)">
 <span>
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<img id="blah" ngf-thumbnail="pic || 'img/addrecipe.png'" style="width:200px;height:150px;border:double; border-radius:4px;"/>
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<img ng-repeat="pic in pics" ngf-thumbnail="pic" style="width:200px;height:150px;border:double; border-radius:4px;"/>
+<img  ng-hide="pics" ngf-thumbnail="'img/addrecipe.png'" style="width:200px;height:150px;border:double; border-radius:4px;"/>
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
-<video width="300" style="border:double; border-radius:4px;" ngf-thumbnail="video || 'img/video.png'" controls>
+<video width="300" style="border:double; border-radius:4px;" ng-repeat="video in videos" ngf-thumbnail="video" controls>
     Your browser does not support HTML5 video.
-</video></br></br>
+</video>
+<img  ng-hide="videos" ngf-thumbnail="'img/video.png'" style="width:200px;height:150px;border:double; border-radius:4px;"/>
+</br></br>
 
-  <label for="pic">Upload Photo:</label>&ensp;<input type='file' ng-model="pic" name="pic" ngf-select ngf-accept="'image/*'">
-  <button class="body-btn" ng-click="formCtrl.uploadPic(pic)">Upload</button>
-  <span class="progress" ng-show="!pic.errorMsg && pic.progress >= 0">
-        <div style="width:{{pic.progress}}%" ng-bind="pic.progress + '%'"></div>
+  <label for="pics">Upload Photo:</label>&ensp;<input type='file' ng-model="pics" ngf-select multiple ngf-accept="'image/*'">
+  <button class="body-btn" ng-click="formCtrl.uploadPic(pics)">Upload</button>
+  <span class="progress" ng-show="!pics.errorMsg && pics.progress >= 0">
+        <div style="width:{{pics.progress}}%" ng-bind="pics.progress + '%'"></div>
   </span>
 
-  <span style="color:green;" ng-show="pic.result">Done!</span>
-  <span style="color:red;" ng-show="pic.errorMsg">OOPS! {{pic.errorMsg}}</span>
+  <span style="color:green;" ng-show="pics.result">Done!</span>
+  <span style="color:red;" ng-show="pics.errorMsg">OOPS! {{pic.errorMsg}}</span>
 
 
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<label for="video">Upload Video:</label>&ensp;<input type="file" name="video" ng-model="video" ngf-select ngf-accept="'video/*'">
-  <button class="body-btn" ng-click="formCtrl.uploadPic(video)">Upload</button>
-    <span class="progress" ng-show="!video.errorMsg && video.progress >= 0">
-      <div style="width:{{video.progress}}%" ng-bind="video.progress + '%'"></div>
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<label for="video">Upload Video:</label>&ensp;<input type="file" name="video" ng-model="videos" ngf-select multiple ngf-accept="'video/*'">
+  <button class="body-btn" ng-click="formCtrl.uploadPic(videos)">Upload</button>
+    <span class="progress" ng-show="!videos.errorMsg && videos.progress >= 0">
+      <div style="width:{{video.progress}}%" ng-bind="videos.progress + '%'"></div>
     </span>
 
-    <span style="color:green;" ng-show="video.result">Done!</span>
-    <span style="color:red;" ng-show="video.errorMsg">OOPS! {{video.errorMsg}}</span>
+    <span style="color:green;" ng-show="videos.result">Done!</span>
+    <span style="color:red;" ng-show="videos.errorMsg">OOPS! {{video.errorMsg}}</span>
 
 </span><br><br>
 
@@ -42,7 +45,6 @@
              <input type="checkbox" ng-model="addRecipeForm.selectedIngr[option.ingredient_name]" ng-true-value="'Y'" ng-false-value = "'N'" />{{option.ingredient_name}}
          </label>
        </details>
-       {{addRecipeForm.selectedIngr}}
        <hr>
 </span>
 
