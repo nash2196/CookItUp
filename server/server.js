@@ -88,7 +88,7 @@ app.post('/recipe/comment',function (request,response) {
 app.get('/images/:recipeID',function(request,response){
 
   var gfs=grid(mongoose.connection.db);
-  var photo_id,error;
+  var photo_id;
 
   var images=[];
   // console.log("Get Image ");
@@ -109,29 +109,30 @@ app.get('/images/:recipeID',function(request,response){
         if(files.length===0){
           return response.json({success : false,message: 'File not found'});
         };
-
+        // console.log("File info :",files);
         for (var i = 0; i < files.length; i++) {
-        //res.writeHead(200, {'Content-Type': files[0].contentType});
-        var readstream = gfs.createReadStream({
-          filename : files[i].filename
-        });
+          //res.writeHead(200, {'Content-Type': files[0].contentType});
+          var readstream = gfs.createReadStream({
+            filename : files[i].filename
+          });
 
-        readstream.on('data', function(data) {
-          images[i] = data.toString('base64');
-        });
+          readstream.on('data', function(data) {
+            images.push(data.toString('base64'));
+          });
 
-        readstream.on('end', function() {
-          console.log("ending response");
-          error=false;
-          // response.send(images.toString('base64'));
-        });
+          readstream.on('end', function() {
+            if (images.length==files.length) {
+              console.log("images length",images.length);
+              response.send({images:images});
+              return;
+            }
+          });
 
-        readstream.on('error', function (err) {
-          console.log('An error occurred!');
-          error=true;
-          throw err;
-        });
-      };//end for
+          readstream.on('error', function (err) {
+            console.log('An error occurred!');
+            throw err;
+          });
+        };//end for
 
         // if (error===false) {
         //   console.log("sending image");
