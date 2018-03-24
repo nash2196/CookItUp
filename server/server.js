@@ -180,6 +180,35 @@ app.post('/login',function(request,response){
 
 });
 
+app.post('/signup',function(request,response){
+  var users=mongoose.model('users');
+  var formData=request.body;
+  if (formData.pswd!=formData.cpswd) {
+    response.json({success : false, message : "Password did'nt matched!"});
+  }else{
+    var users = new users({
+      name : formData.name,
+      userid : formData.email,
+      password : formData.pswd,
+    });
+
+    users.save(function (err,users) {
+      if (err) {
+        console.log(err);
+        response.json({success : false, message : "could not add user"});
+      }
+      if (users) {
+        console.log(users);
+        response.json({success : true, message : "User added successfully"});
+      }else {
+        console.log("No users affected");
+        response.json({success : false, message : "could not add user"});
+      }
+    });
+  }
+
+});
+
 
 app.use(function(request,response,next) {
   var token = request.body.token || request.body.query || request.headers['x-access-token'];

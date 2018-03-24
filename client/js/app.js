@@ -61,6 +61,37 @@ app.controller('MainController',function(authService,$timeout,$state,$transition
 //   console.log("headCtrl login: ",this.loggedIn);
 // });
 
+app.controller('SignupController',function($state,$http,valueService){
+console.log("reachedhere");
+  this.doSignup = (formData) =>{
+//    this.errorMsg=false;
+
+    var formData={
+      email:formData.email,
+      name: formData.uname,
+      pswd:formData.pswd,
+      cpswd:formData.cpswd,
+    };
+
+    $http.post('/signup',formData)
+    .then((response) => {
+      console.log("reached in http post!");
+      if (response.data.success) {
+        this.successMsg = response.data.message+"...Recirecting...";
+        $state.go('login');
+      }else {
+        this.errorMsg = response.data.message;
+      }
+    });
+    // if(pswd==cpswd){
+    //   alert("SignUp Successfull!");
+    // }
+    // else{
+    //   alert("Password did'nt matched!")
+    // }
+  };
+});
+
 app.controller('IngrController', function($http, valueService) {
       $http.get('/types').then((response) => {
       this.types = response.data;

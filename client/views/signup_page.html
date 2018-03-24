@@ -1,16 +1,18 @@
 <div class="container">
   <center>
     <img src="img/signup.png" width="100px" height="100px"></img>
-      <form name="signup" action="">
+      <form name="signupForm" ng-controller="SignupController as signupCtrl" ng-submit="signupCtrl.doSignup(signupForm)">
         <label>Enter your email id:</label>
-        <input type="text" id="id" placeholder="Enter your email-id" required><br/><br/>
+        <input type="email" id="email" placeholder="Enter your email-id" ng-model="signupForm.email" required><br/><br/>
         <label>Enter your name:&nbsp;&nbsp;&ensp;</label>
-        <input type="text" id="name" placeholder="Enter your name" required><br/><br/>
+        <input type="text" id="uname" placeholder="Enter your name" ng-model="signupForm.uname" required><br/><br/>
         <label>Enter password:&ensp;&ensp;&nbsp; </label>
-        &nbsp; <input type="password" id="pwd" placeholder="Enter password" required><br/><br/>
+        &nbsp; <input type="password" id="pswd" placeholder="Enter password" ng-model="signupForm.pswd" required><br/><br/>
         <label>Confirm password:                 </label>
-        &nbsp;&nbsp;<input type="password" id="confirmpwd" placeholder="Re-write your password" required><br/><br/>
-        <button class="body-btn">Sign Up</button>
+        &nbsp;&nbsp;<input type="password" id="cpswd" placeholder="Re-write your password" ng-model="signupForm.cpswd" required><br/><br/>
+        <button type="submit" class="body-btn">Sign Up</button><br/>
+        <label class="error" ng-show="signupCtrl.errorMsg">{{signupCtrl.errorMsg}}</label>
+        <label class="success" ng-show="signupCtrl.successMsg">{{signupCtrl.successMsg}}</label>
       </form>
     </center>
 </div>

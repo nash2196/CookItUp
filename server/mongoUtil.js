@@ -42,7 +42,10 @@ mongoose.model('recipes',recipeSchema);
 var userSchema = new schema({
   "name" : String,
   "userid" : String,
-  "password" :String
+  "password" :String,
+  "recipes_uploaded":[],
+  "saved_recipes":[],
+  "profile_picture":""
 },{collection:'users'});
 userSchema.methods.comparePassword = function(password) {
   return password===this.password;
