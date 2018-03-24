@@ -61,7 +61,7 @@ app.controller('MainController',function(authService,$timeout,$state,$transition
 //   console.log("headCtrl login: ",this.loggedIn);
 // });
 
-app.controller('SignupController',function($state,$http,valueService){
+app.controller('SignupController',function($state,$http){
 console.log("reachedhere");
   this.doSignup = (formData) =>{
 //    this.errorMsg=false;

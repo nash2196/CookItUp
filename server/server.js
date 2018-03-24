@@ -181,34 +181,37 @@ app.post('/login',function(request,response){
 });
 
 app.post('/signup',function(request,response){
-  var users=mongoose.model('users');
+
+  var user=mongoose.model('users');
   var formData=request.body;
   if (formData.pswd!=formData.cpswd) {
     response.json({success : false, message : "Password did'nt matched!"});
-  }else{
-    var users = new users({
+  }
+  else{
+    var userinfo=new user({
       name : formData.name,
       userid : formData.email,
       password : formData.pswd,
     });
-
-    users.save(function (err,users) {
-      if (err) {
-        console.log(err);
-        response.json({success : false, message : "could not add user"});
+    user.findOne({userid:userinfo.userid}).exec(function(err,docs){
+      if(docs){
+        response.json({success:false,message:"User already exists!"});
       }
-      if (users) {
-        console.log(users);
-        response.json({success : true, message : "User added successfully"});
-      }else {
-        console.log("No users affected");
-        response.json({success : false, message : "could not add user"});
+      else{
+        userinfo.save(function (err,user) {
+          if (err) {
+            console.log(err);
+            response.json({success : false, message : "could not add user"});
+          }
+          if (user) {
+            console.log(user);
+            response.json({success : true, message : "User added successfully"});
+          }
+        });
       }
     });
   }
-
 });
-
 
 app.use(function(request,response,next) {
   var token = request.body.token || request.body.query || request.headers['x-access-token'];
