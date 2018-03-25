@@ -61,7 +61,7 @@ app.controller('MainController',function(authService,$timeout,$state,$transition
 //   console.log("headCtrl login: ",this.loggedIn);
 // });
 
-app.controller('SignupController',function($state,$http){
+app.controller('SignupController',function($state,$http,$timeout){
 console.log("reachedhere");
   this.doSignup = (formData) =>{
 //    this.errorMsg=false;
@@ -78,7 +78,12 @@ console.log("reachedhere");
       console.log("reached in http post!");
       if (response.data.success) {
         this.successMsg = response.data.message+"...Recirecting...";
-        $state.go('login');
+
+        $timeout(()=>{
+            $state.go('login');
+            this.successMsg = null;
+        },2000);
+
       }else {
         this.errorMsg = response.data.message;
       }
