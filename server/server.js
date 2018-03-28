@@ -234,6 +234,27 @@ app.post('/user',function (request,response) {
   response.send(request.decoded);
 });
 
+app.get('/details/:userid',function (request,response) {
+  var users = mongoose.model('users');
+  var findUser = request.params.userid;
+
+  users.findOne({userid:findUser},function (err,user) {
+    if (err) {
+      throw err;
+    }
+    if (!user) {
+      response.json({success:false, message:"Could not find user info"});
+    }else {
+      var userinfo = {
+        username : user.name,
+        description : user.description
+      };
+      response.json({success:true, info:userinfo});
+    };
+
+  });
+});
+
 app.post('/upload/pic',multipartMiddleware, function(request,response){
     var uuid = null;
     var gfs=grid(mongoose.connection.db);
@@ -351,7 +372,80 @@ app.post('/upload/data',function(request,response){
 
 });
 
+app.post('/upload/profilePic',multipartMiddleware,function (request,response) {
+  var uuid = uuidv4();
+  var gfs=grid(mongoose.connection.db);
+  var user = mongoose.model('users');
+  var file=request.files.file.path;
+  var userid = request.body.userid;
+  // console.log(file);
+  var writestream=gfs.createWriteStream({
+     filename : request.files.file.originalFilename,
+     metadata : {profileID:uuid}
+  });
+  fs.createReadStream(file).pipe(writestream);
 
+  writestream.on('error',function (err) {
+    console.log("Error:",err);
+    response.json({success:false, message:'Could not upload image'});
+  });
+  writestream.on('close',function(file){
+    console.log(file.filename+" written to DB");
+    user.findOneAndUpdate({userid:userid}, {$set : {"profile_picture" : uuid}},function (err,changed) {
+      if (err) {
+        console.log("Error:",err);
+        response.json({success : false, message : 'Could not add profile picture'});
+      }else {
+        console.log("Changed user : ",changed);
+        response.json({success:true, message:'Updated profile picture'});
+      };
+    });
+    // response.json({success:true, uuid:uuid});
+  });
+});
+
+
+app.post('/upload/profileData',function (request,response) {
+  var user = mongoose.model('users');
+  var formData=request.body;
+  var error=false;
+  user.findOne({userid:formData.userID}).exec(function (err,user) {
+    if (err) {
+      console.log("Error: ",err);
+      response.json({success:false, message:"Could not update user info"});
+    }
+
+    if(!user){
+      response.json({success:false, message:"Could not update user info"});
+    }else if(user) {
+      if (formData.name!=null && formData.name!='' && formData.name!=undefined) user.name=formData.name;
+      if (formData.description!=null && formData.description!='' && formData.description!=undefined) user.description=formData.description;
+      if (formData.curpswd) {
+        var validPswd = user.comparePassword(formData.curpswd);
+        if (!validPswd) {
+          response.json({success:false, message:'Incorrect current password'});
+          error=true;
+        }else {
+          if (formData.newpswd!=formData.cnfrmpswd) {
+            response.json({success:false, message:'Passwords dont match!'});
+            error=true;
+          }else {
+            user.password=formData.newpswd;
+          }//end else
+        }//end else
+      }//end if
+      if (!error) {
+        user.save(function (err,user) {
+          if (err) {
+            response.json({success:false, message:"Could not update user info"});
+          }else {
+            response.json({success:true, message:"Updated user info"});
+          }
+        });
+      }
+    }//end elseif
+  });
+});
 
 
 

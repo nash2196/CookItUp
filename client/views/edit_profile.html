@@ -1,32 +1,32 @@
 
 <div class="container">
 
-<span ng-controller="MediaController as mediaCtrl">
+<form ng-controller="EditProfileController as editCtrl" ng-model = "editForm" ng-submit="editCtrl.doEdit(editForm,mainCtrl.userid)">
   &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<img id="blah" ngf-thumbnail="pic || 'img/addrecipe.png'" style="width:200px;height:150px;border:double; border-radius:4px;"/></br></br>
   <label>Change Profile Photo:</label>&ensp;<input type='file' ng-model="pic" name="file" ngf-select ngf-accept="'image/*'">
-  <button ng-click="mediaCtrl.uploadPic(pic)">Upload</button>
-  <span class="progress" ng-show="!mediaCtrl.errorMsg && pic.progress >= 0">
+  <button ng-click="editCtrl.uploadPic(pic,mainCtrl.userid)">Upload</button>
+  <span class="progress" ng-show="!pic.errorMsg && pic.progress >= 0">
       <div style="width:{{pic.progress}}%" ng-bind="pic.progress + '%'"></div>
   </span>
 
   <span ng-show="pic.result">Done!</span>
-  <span ng-show="mediaCtrl.errorMsg">OOPS! {{mediaCtrl.errorMsg}}</span>
-</span>
+  <span ng-show="pic.errorMsg">OOPS! {{pic.errorMsg}}</span><br><br>
 
-<form>
 <label>User Name:</label>
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="text" placeholder="Enter the name" name="user_name" required></br></br>
-<label><b>Change Password</b></br></br>
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="text" placeholder="{{editCtrl.userInfo.username}}" ng-model="editForm.name"></br></br>
+<label><b>Change Password</b><input type="checkbox" ng-model="checked"/><br>
 <label>Current Password:</label>
-&ensp;<input type="password" placeholder="Enter the current password" name="psw" required></br></br>
+&ensp;<input type="password" placeholder="Enter the current password" ng-model="editForm.curpswd" ng-disabled="!checked" required></br></br>
 <label>New Password:</label>
-&ensp;&ensp;&ensp;<input type="password" placeholder="Enter the new password" name="psw1" required></br></br>
+&ensp;&ensp;&ensp;<input type="password" placeholder="Enter the new password" ng-model="editForm.newpswd" ng-disabled="!checked" required></br></br>
 <label>Confirm Password:</label>
-<input type="password" placeholder="Enter the new passoword again" name="psw2" required></br></br>
+<input type="password" placeholder="Enter the new passoword again" ng-model="editForm.cnfrmpswd" ng-disabled="!checked" required></br></br>
 <label>Edit Description:</label>
-&ensp;&ensp;<input type="text" cols="70" rows="20" placeholder="Add description" name="descp"></br></br>
+&ensp;&ensp;<input type="text" cols="70" rows="20" placeholder="{{editCtrl.userInfo.description}}" ng-model="editForm.description"></br></br>
 <input type="submit" name="button" value="Submit">
 </form>
+<label class="success" ng-show="editCtrl.successMsg">{{editCtrl.successMsg}}</label>
+<label class="error" ng-show="editCtrl.errorMsg">{{editCtrl.errorMsg}}</label>
 </div>
 <!-- </body>
 </html> -->

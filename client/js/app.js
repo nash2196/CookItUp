@@ -19,6 +19,7 @@ app.controller('MainController',function(authService,$timeout,$state,$transition
       console.log("Not logged in");
       this.isLoggedIn = false;
       this.username = null;
+      this.userid = null;
     };
 
   });
@@ -62,9 +63,9 @@ app.controller('MainController',function(authService,$timeout,$state,$transition
 // });
 
 app.controller('SignupController',function($state,$http,$timeout){
-console.log("reachedhere");
+  // console.log("reachedhere");
   this.doSignup = (formData) =>{
-//    this.errorMsg=false;
+   this.errorMsg=false;
 
     var formData={
       email:formData.email,
@@ -77,7 +78,7 @@ console.log("reachedhere");
     .then((response) => {
       console.log("reached in http post!");
       if (response.data.success) {
-        this.successMsg = response.data.message+"...Recirecting...";
+        this.successMsg = response.data.message+"...Redirecting...";
 
         $timeout(()=>{
             $state.go('login');
@@ -94,6 +95,75 @@ console.log("reachedhere");
     // else{
     //   alert("Password did'nt matched!")
     // }
+  };
+});
+
+
+app.controller('EditProfileController',function (Upload,$http,$timeout,$state,authService) {
+
+
+
+  authService.getUser().then((response) => {
+    this.successMsg=null;
+    this.errorMsg=null;
+    this.userid = response.data.email;
+    $http.get('/details/'+this.userid)
+    .then((response)=>{
+      if (response.data.success) {
+        this.userInfo = response.data.info;
+        console.log(this.userInfo);
+      }else {
+        this.errorMsg = response.data.message;
+      };
+    });
+  });
+
+  var uuid = null;
+  this.doEdit = (formData,userid)=>{
+    this.successMsg=null;
+    this.errorMsg=null;
+    var userInfo = {
+      userID : userid,
+      name : formData.name,
+      curpswd : formData.curpswd,
+      newpswd : formData.newpswd,
+      cnfrmpswd : formData.cnfrmpswd,
+      description : formData.description
+    };
+
+    $http.post('/upload/profileData',userInfo)
+    .then((response) => {
+      if (response.data.success) {
+        this.successMsg = response.data.message;
+
+        $timeout(()=> {
+          this.successMsg = null;
+          $state.reload();
+        },3000);
+      }else {
+        this.errorMsg = response.data.message;
+      }
+    });
+  };
+
+
+  this.uploadPic = (file,userid) => {
+    file.upload = Upload.upload({
+      url : '/upload/profilePic',
+      data : {file : file, userid : userid}
+    }).then((response) => {
+      file.result = response.data.message;
+      console.log(file.result);
+    }, (response) => {
+      if (response.status > 0){
+        file.errorMsg = response.status + ': ' + response.data.message;
+      }
+    }, (evt) => {
+      file.progress = parseInt(100.0 * evt.loaded / evt.total);
+      $timeout(function() {
+        file.progress = -1;
+      },3000);
+    });
   };
 });
 
@@ -275,45 +345,7 @@ app.controller('FormController', function(Upload,$http,$timeout,$state,valueServ
           files.progress = -1;
         },3000);
       });
-
     }
-
-  //   if(uuid === null){
-  //   file.upload = Upload.upload({
-  //     url: '/upload/pic',
-  //     data: {files: files}
-  //   }).then((response) => {
-  //       file.result = uuid = response.data;
-  //       console.log(uuid);
-  //   }, (response) => {
-  //     if (response.status > 0){
-  //       file.errorMsg = response.status + ': ' + response.data;
-  //     }
-  //   }, (evt) => {
-  //     file.progress = parseInt(100.0 * evt.loaded / evt.total);
-  //     $timeout(function() {
-  //       file.progress = -1;
-  //     },3000);
-  //   });
-  //
-  // }else{
-  //   file.upload = Upload.upload({
-  //     url: '/upload/pic',
-  //     data: {file: file, 'uuid':uuid}
-  //   }).then((response) => {
-  //         file.result = uuid = response.data;
-  //   }, (response) => {
-  //     if (response.status > 0){
-  //       file.errorMsg = response.status + ': ' + response.data;
-  //     }
-  //   }, (evt) => {
-  //     file.progress = parseInt(100.0 * evt.loaded / evt.total);
-  //     $timeout(function() {
-  //       file.progress = -1;
-  //     },3000);
-  //   });
-  // }
-
   };
 
 this.uploadData = (form,userid) => {
