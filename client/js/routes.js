@@ -35,7 +35,6 @@ app.config(($stateProvider,$urlRouterProvider)=>{
     controller : function($http,$timeout,$state,getRecipe,getImages) {
       this.recipe = getRecipe.data;
       this.recipe.images = getImages.data.images;
-      // console.log(this.recipe.image);
       this.commentSuccess=false;
       this.commentError=false;
       this.recipe.addComment = (userid,comment) => {

@@ -1,6 +1,11 @@
 <div class="container">
 <h3>{{recipeViewCtrl.recipe.recipe_name}}</h3>
-    <img style="height : 300px; width:300px;"  ng-repeat="image in recipeViewCtrl.recipe.images" ng-src="data:image/jpg;base64,{{image}}" onerror="this.onerror=null;this.src='img/no_img.png';"/>
+
+<img style="height : 300px; width:300px;"
+ng-repeat="image in recipeViewCtrl.recipe.images"
+ng-src="data:{{image.filetype}};base64,{{image.data}}"
+onerror="this.onerror=null;this.src='img/no_img.png';"/>
+
   <div>
     <b>Created By : </b><label>{{recipeViewCtrl.recipe.uploader}}</label>
   </div>

@@ -90,7 +90,7 @@ app.get('/images/:recipeID',function(request,response){
   var gfs=grid(mongoose.connection.db);
   var photo_id;
 
-  var images=[];
+  var images=[],fTypes=[];
   // console.log("Get Image ");
   recipes.findOne({recipe_name:request.params.recipeID},'photos',function (err,recipe) {
     if (err) {
@@ -109,20 +109,27 @@ app.get('/images/:recipeID',function(request,response){
         if(files.length===0){
           return response.json({success : false,message: 'File not found'});
         };
-        // console.log("File info :",files);
+        console.log("File info :",files);
         for (var i = 0; i < files.length; i++) {
           //res.writeHead(200, {'Content-Type': files[0].contentType});
+          fTypes.push(files[i].contentType);
           var readstream = gfs.createReadStream({
             filename : files[i].filename
           });
 
           readstream.on('data', function(data) {
-            images.push(data.toString('base64'));
+            images.push(
+              {
+                'data':data.toString('base64'),
+                'filetype':fTypes.shift()
+              }
+            );
           });
 
           readstream.on('end', function() {
-            if (images.length==files.length) {
-              console.log("images length",images.length);
+            if (images.length===files.length) {
+              // console.log("images ",images);
+              // console.log("images:",fTypes);
               response.send({images:images});
               return;
             }
@@ -268,9 +275,10 @@ app.post('/upload/pic',multipartMiddleware, function(request,response){
 
     for (var i = 0; i < request.files.files.length; i++) {
       var file=request.files.files[i].path;
-      // console.log(file);
+      // console.log(request.files.files[i].headers['content-type']);
       var writestream=gfs.createWriteStream({
          filename : request.files.files[i].originalFilename,
+         content_type : request.files.files[i].headers['content-type'],
          metadata : {recipeid:uuid}
       });
       fs.createReadStream(file).pipe(writestream);

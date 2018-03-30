@@ -318,7 +318,7 @@ app.controller('FormController', function(Upload,$http,$timeout,$state,valueServ
   this.errorMsg = null;
 
   this.uploadPic = (files) => {
-    console.log(files," length:",files.length);
+    // console.log(files," type:",files[0].type);
     if (files && files.length){
       if(uuid === null){
         files.upload = Upload.upload({
