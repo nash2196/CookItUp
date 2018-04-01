@@ -6,7 +6,6 @@ app.config(function ($httpProvider) {
 
 app.controller('MainController',function(authService,$timeout,$state,$transitions){
 
-
   $transitions.onStart({},() => {
     if(authService.isLoggedIn()) {
       console.log("User is logged in");
@@ -98,10 +97,23 @@ app.controller('SignupController',function($state,$http,$timeout){
   };
 });
 
-
+app.controller('ProfileController',function ($http,authService) {
+  authService.getUser().then((response) => {
+    this.successMsg=null;
+    this.errorMsg=null;
+    this.userid = response.data.email;
+    $http.get('/details/'+this.userid)
+    .then((response)=>{
+      if (response.data.success) {
+        this.userInfo = response.data.info;
+        console.log(this.userInfo.username);
+      }else {
+        this.errorMsg = response.data.message;
+      };
+    });
+  });
+});
 app.controller('EditProfileController',function (Upload,$http,$timeout,$state,authService) {
-
-
 
   authService.getUser().then((response) => {
     this.successMsg=null;

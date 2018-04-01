@@ -45,7 +45,7 @@ var userSchema = new schema({
   "password" :String,
   "recipes_uploaded":[],
   "saved_recipes":[],
-  "profile_picture":"",
+  "profile_picture":String,
   "description":String
 },{collection:'users'});
 userSchema.methods.comparePassword = function(password) {

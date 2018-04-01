@@ -243,21 +243,41 @@ app.post('/user',function (request,response) {
 
 app.get('/details/:userid',function (request,response) {
   var users = mongoose.model('users');
-  var findUser = request.params.userid;
+  var gfs=grid(mongoose.connection.db);
+  var pro_pic='';
 
-  users.findOne({userid:findUser},function (err,user) {
+  users.findOne({userid:request.params.userid},function (err,user) {
     if (err) {
       throw err;
     }
     if (!user) {
       response.json({success:false, message:"Could not find user info"});
     }else {
-      var userinfo = {
-        username : user.name,
-        description : user.description
-      };
-      response.json({success:true, info:userinfo});
-    };
+      gfs.files.find({"metadata.profileID":user.profile_picture}).toArray(function (err, files) {
+        var written=false;  //safegaurd against readstream.on('data') being called twice,as readstream reads files in chunks
+        var readstream = gfs.createReadStream({
+          filename:files[0].filename
+        });
+        readstream.on('data',function (data) {
+          if (!written) {
+            written=true;
+            pro_pic = data.toString('base64');
+          }
+        });
+        readstream.on('end',function () {
+          var userinfo = {
+            username : user.name,
+            description : user.description,
+            pro_pic : pro_pic
+          };
+          response.json({success:true, info:userinfo});
+        });
+        readstream.on('error',function () {
+          console.log('error');
+          response.json({success:false});
+        });
+      });//end find file`
+    };//end else
 
   });
 });

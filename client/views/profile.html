@@ -4,11 +4,14 @@
 .icon-btn {margin-top:10px; margin-right: 10px;padding: 1px 15px 3px 2px; border-radius:50px;}
 </style>
 
-<div class="container-fluid">
+<div class="container-fluid" ng-controller='ProfileController as profileCtrl'>
 <div class="usr-prof">
-        <img src="img/default.png" style="height:200px; width:200px;">
-  <p style="font-size:20px;text-align:left;">{{mainCtrl.username}}</p>
-  <p style="font-size:20px;text-align:left;">{{mainCtrl.userid}}</p>
+        <img ng-src="data:image/jpg;base64,{{profileCtrl.userInfo.pro_pic}}"
+        onerror="this.onerror=null;this.src='img/default.png';"
+        style="height:200px; width:200px;">
+  <p style="font-size:20px;text-align:left;">{{profileCtrl.userInfo.username}}</p>
+  <p style="font-size:20px;text-align:left;">{{profileCtrl.userid}}</p>
+  <p style="font-size:20px;text-align:left;">{{profileCtrl.userInfo.description}}</p>
 </div>
 </div>
 <hr style="border-top: 1px dotted #8c8b8b;">
