@@ -19,24 +19,33 @@ mongoose.model('types', ingredients);
 var mealCuisineType=new schema({},{collection:'mealcuisinetype'});
 mongoose.model('meals', mealCuisineType);
 
+//var fs.files=new schema({},{collection:'fs.files'});
+var FileSchema = new schema({}, { collection: 'fs.files' });
+var fsfile = mongoose.model('fsfile', FileSchema);
 
 var recipeSchema=new schema({
+  //"_id": schema.Types.ObjectID,
+  "recipe_id": String,
   "recipe_name" : String,
   "ingredients" : [String],
   "method" : String,
-  "likes" : Number,
   "ratings" : Number,
   "comments" : [{"body" : String, "userid" : String}],
   "photos" : [String],
   "videos" : [String],
-  "date" : [{"type" : Date, default : Date.now }],
+  "date" : String,
   "mealtype" : String,
   "cuisinetype" : String,
-  "uploader" : String
-
+  "uploader" : String,
+  "taste":String,
+  "other_ingre":String,
+  "serves":Number,
+  "time":String,
+  "thumbnail":[],
+  "liked_by":[],
+  "gridfs_id":{ type: schema.Types.ObjectId, ref:'fsfile' }
 },{collection:'recipes'});
 mongoose.model('recipes',recipeSchema);
-
 
 
 var userSchema = new schema({
@@ -45,47 +54,13 @@ var userSchema = new schema({
   "password" :String,
   "recipes_uploaded":[],
   "saved_recipes":[],
-  "profile_picture":"",
-  "description":String
+  "profile_picture":String,
+  "description":String,
+  "active": {type:Boolean, required:true, default:false} ,
+  "temporaryToken":{type:String, required:false}
+
 },{collection:'users'});
 userSchema.methods.comparePassword = function(password) {
   return password===this.password;
 };
 mongoose.model('users',userSchema);
-
-
-
-  //ingredient.methods.findAll = function(cb) {
-//  return this.model('ingredient').find(, cb);
-//};
-
-// module.exports={
-//   connect(){
-//     client.connect('mongodb://localhost:27017/cookitup',(err,db)=>{
-//       if(err){
-//         console.log("Error connecting to MongoDB!");
-//         process.exit(1);
-//       }
-//         _db=db;
-//         console.log("Connected to Mongo...");
-//     });
-//   },
-//   recipes(){
-//     return _db.collection('recipes');
-//   },
-//   users(){
-//     return _db.collection('users');
-//   },
-//   ingredients(){
-//     return _db.collection('ingredients');
-//   },
-//   mealtypes(){
-//     return _db.collection('mealtypes');
-//   },
-//   cuisinetypes(){
-//     return _db.collection('cuisinetypes');
-//   },
-//   mealcuisinetype(){
-//     return _db.collection('mealcuisinetype');
-//   }
-// }

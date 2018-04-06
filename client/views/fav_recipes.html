@@ -1,1 +1,27 @@
-<h4>{{mainCtrl.username}}'s Favourite!</h4>
+<h2>&nbsp;&nbsp;&nbsp;&nbsp;{{mainCtrl.username}}'s Favourites!</h2>
+<br/><br/>
+<section ng-controller = "favController as favCtrl">
+
+  <div ng-show="!favCtrl.favRecipes">No favourite recipes to display.</div>
+  <div ng-show="favCtrl.favRecipes" class="recipe" ng-repeat = "recipe in favCtrl.favRecipes">
+    <!-- <a class="recipe" ui-sref="recipe-view({recipeID : recipe.recipe_name })"> -->
+        <div class="recp">
+        <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a class="recipe" ui-sref="recipe-view({recipeID : recipe.recipe_name })">
+          <img style="height : 200px; width:200px;"
+          ng-src="img/recipes/{{recipe.recipe_name}}.jpg"
+          onerror="this.onerror=null;this.src='img/no_img.png';" />
+        </label>          <!-- ng-repeat="image in recipeViewCtrl.recipe.images" -->
+          <label><p>Name: {{recipe.recipe_name|capitalize}}</p>
+          <p>Uploaded by: {{recipe.uploader|capitalize}}</p>
+          <p>Likes:{{recipe.liked_by.length}}</p>
+        </label>
+        </a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <label>
+          <button class="body-btn"  ng-click="mainCtrl.removeFav(recipe.recipe_id,mainCtrl.userid)">Remove from favourites</button>
+        </label>
+      </div>
+    <!-- </a> -->
+  </div>
+</section>

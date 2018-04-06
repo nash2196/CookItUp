@@ -14,7 +14,7 @@
     box-sizing: border-box;
 }
 
-input[type=password],input[type=time],input[type=number],input[type=text], select, textarea{
+input[type=password],input[type=time],input[type=number],input[type=email],input[type=text], select, textarea{
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -26,6 +26,7 @@ label {
     padding: 12px 12px 12px 0;
     display: inline-block;
     font-size:20px;
+    color: black;
 }
 
 input[type=submit] {

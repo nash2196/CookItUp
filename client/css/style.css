@@ -1,9 +1,10 @@
 
-div.header{
+
+.sec1{
   display: block;
   position: relative;
   background-image: url("/img/backgrnd2.jpg");
-  min-height: 450px;
+  min-height: 350px;
   min-width: 100vh;
   /* Create the parallax scrolling effect */
   background-attachment: fixed;
@@ -12,28 +13,33 @@ div.header{
   background-size: cover;
 }
 
+.form-group span {
+  font-size: 16px;
+  color: red;
+}
+
 div.header-bar{
-  bottom: 0;
-  position: relative;
   min-width: inherit;
+  height:150px;
   display: block;
   color: white;
+  background-color: black;
   text-align:justified;
   padding: 25px 16px;
   font-size: 36px;
   text-decoration: none;
   font-family: Palatino;
-  overflow: hidden;
 }
 
 
 .header-bar img{
-  float: left;
-  width: 400px;
-  height: 150px;
+  top:0px;
+  margin-left: 50px;
+  width: 300px;
+  height: 100px;
 }
 span.header-bar{
-  margin-top:  55px;
+  margin-top:20px;
   position: relative;
   float: right;
 }
@@ -82,7 +88,6 @@ button.header-bar:hover {
   float:left;
   width: 30%;
   height: 100vh;
-  border-right:1px solid black;
   background-image: inherit;
   background-color: rgb(220, 220, 220);
 
@@ -96,7 +101,6 @@ button.header-bar:hover {
 .floatright {
   float: right;
   display: inline-block;
-  background-image: inherit;
   background-color: rgb(250, 250, 250);
   width: 70%;
   height: 100%;

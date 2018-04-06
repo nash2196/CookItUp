@@ -9,14 +9,14 @@ var app = express();
 let mongoUtil=require('./mongoUtil');
 var path=require('path');
 var fs=require('fs');
+var nodemailer = require('nodemailer');
+var sgTransport = require('nodemailer-sendgrid-transport');
 var mongoose = require('mongoose');
 var grid=require('gridfs-stream');
+
 grid.mongo=mongoose.mongo;
 
-
-
 var recipes=mongoose.model('recipes');
-
 
 app.use(express.static(path.join(__dirname, '/../client')));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -45,9 +45,87 @@ app.get('/meals', function(request,response){
 
 app.get('/recipes', function(request,response){
     recipes.find(function(err,recipes){
+      //console.log(recipes);
       response.send(recipes);
     });
 });
+
+
+//get recipes with images
+// app.get('/recipes', function(request,response){
+//     recipes.find({}).populate('gridfs_id').exec(function(err,recipes){
+//     //  console.log(recipes);
+//       var gfs=grid(mongoose.connection.db);
+//       if (err) {
+//         console.log("error in finding recipe");
+//         throw err;
+//       }
+//       //var photo_id;
+//     for(var i=0;i<recipes.length;i++){
+//       (function(i){
+//       var thumbnail=[],fTypes=[];
+//       // console.log("Get Image ");
+//       //recipes.findOne({recipe_name:request.params.recipeID},'photos',function (err,recipe) {
+//         //console.log(photo_id);
+//
+//         if (recipes[i].photos[0]) {
+//           //gfs.files.find({"metadata.recipeid":photo_id}).toArray(function (err, files) {
+//             //if (err) {
+//             //  throw err;
+//             //};
+//
+//             // if(files.length===0){
+//             //   return response.json({success : false,message: 'File not found'});
+//             // };
+//
+//             console.log(i+" : "+recipes[i].recipe_name);
+//  //            gfs.exist({_id: recipes[i].gridfs_id}, function (err, found) {
+//  // if (err) return handleError(err);
+//  // found ? console.log('File exists') : console.log('File does not exist');
+//  //res.send(found)
+// //});
+//             //console.log("File info :",files);
+//             //for (var i = 0; i < files.length; i++) {
+//               //res.writeHead(200, {'Content-Type': files[0].contentType});
+//               fTypes.push(recipes[i].gridfs_id.contentType);
+//               console.log("ftypes "+i+" "+ftypes );
+//               var readstream = gfs.createReadStream({
+//                 filename : recipes[i].gridfs_id.filename
+//               });
+//               console.log("filename: "+recipes[i].gridfs_id.filename);
+//
+//               readstream.on('data', function(data) {
+//                 thumbnail.push(
+//                   {
+//                     'data':data.toString('base64'),
+//                     'filetype':fTypes.shift()
+//                   }
+//                 );
+//               });
+//
+//               readstream.on('end', function() {
+//                 // if (recipes[i].thumbnail.length===1) {
+//                 //   // console.log("images ",images);
+//                 //   // console.log("images:",fTypes);
+//                 //   //response.send({images:images});
+//                 //   console.log("finished!");
+//                   return;
+//               });
+//
+//               readstream.on('error', function (err) {
+//                 console.log('An error occurred!');
+//                 throw err;
+//               });
+//             //};//end for
+//           }
+//         else {
+//           console.log("no photo_id");
+//           response.send({success:false});
+//         }
+//       })(i);
+//     }
+//     });
+// });
 
 
 app.get('/recipe/:recipeID', function(request,response) {
@@ -81,9 +159,59 @@ app.post('/recipe/comment',function (request,response) {
           response.json({success : true});
         }
       });
-
     }
 });
+
+
+app.get('/uploadedRecipes/:userid',function(request,response){
+  //var uploadedRecipes=[];
+  recipes.find({"uploader":request.params.userid}).exec(function(err,uploadedRecipes){
+    if(err){
+      throw err;
+    }else{
+      if(!uploadedRecipes){
+        response.send({success:false, message:'No uploaded recipes to display.'});
+      }else{
+        response.send(uploadedRecipes);
+      }
+    }
+  });
+});
+
+
+app.get('/favRecipes/:userid',function(request,response){
+//  console.log("In app.js "+request.params.userid);
+    var favouriteRecipes=[];
+  var user = mongoose.model('users');
+
+  user.findOne({userid : request.params.userid}).select('saved_recipes').exec(function(err,user){
+
+    for(var i=0;i<user.saved_recipes.length;i++){
+      //console.log(i);
+      recipes.findOne({"recipe_id":user.saved_recipes[i]},(function(i){
+        return function(err,recipe){
+                favouriteRecipes.push(recipe);
+              //  console.log(i);
+                //console.log(i+" loop: "+favouriteRecipes[i]);
+                if((i+1)==user.saved_recipes.length){
+                //  console.log("In if condition: "+favouriteRecipes);
+                  response.send(favouriteRecipes);
+                //console.log(recipe);
+              }
+            }
+          }) (i));
+      }
+      });
+});
+
+  // var favouriteRecipes=[];
+  // for(var i=0;i<request.body;i++){
+  //   recipes.findOne({"recipe_id":request.body[i]},function(err,recipe){
+  //     favouriteRecipes.push(recipe);
+  //   });
+  // }
+//   response.json(favouriteRecipes);
+// });
 
 app.get('/images/:recipeID',function(request,response){
 
@@ -98,7 +226,7 @@ app.get('/images/:recipeID',function(request,response){
       throw err;
     }
     photo_id = recipe.photos[0];
-    console.log(photo_id);
+//    console.log(photo_id);
 
     if (photo_id) {
       gfs.files.find({"metadata.recipeid":photo_id}).toArray(function (err, files) {
@@ -109,7 +237,7 @@ app.get('/images/:recipeID',function(request,response){
         if(files.length===0){
           return response.json({success : false,message: 'File not found'});
         };
-        console.log("File info :",files);
+  //      console.log("File info :",files);
         for (var i = 0; i < files.length; i++) {
           //res.writeHead(200, {'Content-Type': files[0].contentType});
           fTypes.push(files[i].contentType);
@@ -169,7 +297,7 @@ app.post('/login',function(request,response){
     console.log("POST recieved");
     console.log(request.body);
 
-    user.findOne({userid : request.body.email}).select('name userid password').exec(function(err,user) {
+    user.findOne({userid : request.body.email}).select('name userid password active').exec(function(err,user) {
       if(err) throw err;
 
       if(!user){
@@ -178,6 +306,8 @@ app.post('/login',function(request,response){
         var validPswd = user.comparePassword(request.body.pswd);
         if(!validPswd){
           response.json({success : false, message : 'Invalid password'});
+        }else if (!user.active) {
+            response.json({success:false, message:'Account is not yet activated. Please check you email for the activation link.',expired:true});
         }else{
           var token = jwt.sign({ username : user.name, email : user.userid},secret,{expiresIn : '24h'});
           response.json({success : true, message : 'User authenticated', name : user.name, token : token});
@@ -188,6 +318,15 @@ app.post('/login',function(request,response){
 });
 
 app.post('/signup',function(request,response){
+  //console.log("reachedhere!");
+  var options = {
+    auth: {
+      api_user: 'cookitup-project',
+      api_key: 'cookitup123'
+    }
+  };
+
+  var client = nodemailer.createTransport(sgTransport(options));
 
   var user=mongoose.model('users');
   var formData=request.body;
@@ -199,6 +338,8 @@ app.post('/signup',function(request,response){
       name : formData.name,
       userid : formData.email,
       password : formData.pswd,
+      profile_picture:"default",
+      temporaryToken:jwt.sign({ username : formData.name, email : formData.userid},secret,{expiresIn : '24h'})
     });
     user.findOne({userid:userinfo.userid}).exec(function(err,docs){
       if(docs){
@@ -211,13 +352,87 @@ app.post('/signup',function(request,response){
             response.json({success : false, message : "could not add user"});
           }
           if (user) {
-            console.log(user);
-            response.json({success : true, message : "User added successfully"});
+            //console.log(user);
+
+            var email = {
+              from: 'Cookitup.com, cookitup@localhost.com',
+              to: user.userid,
+              subject: 'Cookitup: Activation link',
+              text: 'Hello '+user.name+', thank you for joining Cookitup. Please click on the following link to activate your Cookitup account: http://localhost:8181/activate/'+user.temporaryToken,
+              html: 'Hello<strong> '+user.name+'</strong>,<br/><br/>Thank you for joining Cookitup.<br/>Please click on the link below to activate your Cookitup account:<br/></br><a href="http://localhost:8181/activate/'+user.temporaryToken+'">http//localhost:8181/activate/</a>'
+            };
+
+            client.sendMail(email, function(err, info){
+                if (err ){
+                  console.log(err);
+                }
+                else {
+                  console.log('Message sent: ' + info.response);
+                }
+            });
+
+            response.json({success : true, message : "Account registered! Please check your email for activation link."});
           }
         });
       }
     });
   }
+});
+
+app.get('/activate/:token',function(request,response){
+  console.log("reachedhere");
+  var user = mongoose.model('users');
+  user.findOne({temporaryToken:request.params.token},function(error,user){
+    if(error) throw error;
+    var token=request.params.token;
+
+
+    var options = {
+      auth: {
+        api_user: 'cookitup-project',
+        api_key: 'cookitup123'
+      }
+    };
+
+    var client = nodemailer.createTransport(sgTransport(options));
+
+    jwt.verify(token, secret, function (err,decoded) {
+      if (err) {
+        response.sendFile(path.join(__dirname + '/../client/views/activate.html'));
+        // response.json({success : false, message : "Activation link has expired"});
+      }else if(!user){
+        response.json({success : false, message : "Activation link has expired"});
+      } else {
+        user.temporaryToken=false;
+        user.active=true;
+        user.save(function(error){
+          if(error){
+            console.log(error);
+          }else{
+
+            var email = {
+              from: 'Cookitup.com, cookitup@localhost.com',
+              to: user.userid,
+              subject: 'Cookitup: Acount activated.',
+              text: 'Hello '+user.name+', Your account has been activated.',
+              html: 'Hello<strong> '+user.name+'</strong>,<br/><br/>Your account has been activated.'
+            };
+
+            client.sendMail(email, function(err, info){
+                if (err ){
+                  console.log(err);
+                }
+                else {
+                  console.log('Message sent: ' + info.response);
+                }
+            });
+            //response.send({success : true, message : "Account activated!"});
+            response.sendFile(path.join(__dirname + '/../client/views/activate.html'));
+          }
+        });
+      };
+    });
+  });
 });
 
 app.use(function(request,response,next) {
@@ -241,24 +456,185 @@ app.post('/user',function (request,response) {
   response.send(request.decoded);
 });
 
+// app.post('/removeProPic',function(request,response){
+//   console.log(request.body);
+//   var users=mongoose.model('users');
+//   users.findOneAndUpdate({"userid":request.body},{$set:{"profile_picture":"default"}}).exec(function(err,changed){
+//     if(err){
+//       throw error;
+//     }
+//     if(changed){
+//         response.json({message:"Current profile picture removed"});
+//     }
+//   });
+// });
+
+app.post('/recipe/doLike',function(request,response){
+  var userid=request.body.userID;
+  var recipeid=request.body.recipeID;
+  //console.log(request.body.recipeID+" "+request.body.userID);
+  recipes.findOne({"recipe_id":recipeid},function(err,recipe){
+    if(err){
+      throw err;
+    }
+    if(recipe){
+    var flag=0;
+    var i;
+    console.log(recipe);
+    console.log("liked_by: "+recipe.liked_by.length);
+
+    for(i=0;i<recipe.liked_by.length;i++)
+    {
+      if(recipe.liked_by[i]==userid){
+        flag=1;
+        break;
+      }
+    }
+    console.log(flag);
+    if(flag==1){
+      recipe.liked_by.splice(i,1);
+      console.log(recipe.liked_by);
+      recipe.save(function(err){
+        if(err){
+          throw err;
+        }
+        else {
+         response.json({action:"unlike"});
+        }
+      });
+    }
+    else{
+      recipe.liked_by.push(request.body.userID);
+      console.log(recipe.liked_by);
+      recipe.save(function(error){
+        if(error){
+          throw error;
+        }
+        else{
+          response.json({action:"like"});
+        }
+      });
+    }
+  }
+  });
+});
+
+app.post('/removeRecipe',function(request,response){
+  var users=mongoose.model('users');
+  var recipeId=request.body.recipeId;
+  var userId=request.body.userId;
+  //console.log(recipeId+"  "+userId);
+  recipes.findOneAndRemove({"recipe_id":recipeId},function(err,changed) {
+    if (err) {
+      throw err;
+    }else {
+      if(changed){
+        console.log("Removed from recipes"+changed);
+        response.json({success:true, message:'Recipe removed!'});
+      }
+      else{
+        response.json({success:true, message:'Recipe is already removed!'});
+      }
+    }
+  });
+});
+
+
+app.post('/removeFav',function(request,response){
+  var users=mongoose.model('users');
+  var recipeId=request.body.recipeId;
+  var userId=request.body.userId;
+  //console.log(recipeId+"  "+userId);
+  users.findOneAndUpdate({"userid":userId},{$pull:{"saved_recipes":recipeId}},function (err,changed) {
+    if (err) {
+      throw err;
+    }else {
+      if(changed){
+        console.log("Removed from favourites");
+        response.json({success:true, message:'Removed from favourites'});
+      }
+      else{
+        console.log("Already removed from favourites. ");
+        response.json({success:true, message:'Already removed from favourites'});
+      }
+    }
+  });
+});
+
+app.post('/addFav',function (request,response){
+  var flag=0;
+  var users = mongoose.model('users');
+  var recipeId=request.body.recipeId;
+  var userId=request.body.userId;
+
+  users.findOne({userid:userId},function (err,user) {
+    //console.log(userId,user);
+    for(var i=0;i<user.saved_recipes.length;i++)
+    {
+      if(user.saved_recipes[i]===recipeId){
+        flag=1;
+        break;
+      }
+    }
+    if(flag==1){
+      response.json({success:false, message:"Already in your favourites!"});
+    }
+    else{
+      user.saved_recipes.push(recipeId);
+      user.save(function(error){
+        if(error){
+          throw error;
+        }
+        else{
+          response.json({success:true, message:"Added to your favourites!"});
+        }
+      });
+    }
+
+  });
+});
+// app.get('/uploadedRecipes/:userid',function(request,response){
+//   var userID=request.params.userid,
+//   recipes.findOne({uploader:userID})
+// });
+
 app.get('/details/:userid',function (request,response) {
   var users = mongoose.model('users');
-  var findUser = request.params.userid;
+  var gfs=grid(mongoose.connection.db);
+  var pro_pic='';
 
-  users.findOne({userid:findUser},function (err,user) {
+  users.findOne({userid:request.params.userid},function (err,user) {
     if (err) {
       throw err;
     }
     if (!user) {
       response.json({success:false, message:"Could not find user info"});
     }else {
-      var userinfo = {
-        username : user.name,
-        description : user.description
-      };
-      response.json({success:true, info:userinfo});
-    };
-
+      gfs.files.find({"metadata.profileID":user.profile_picture}).toArray(function (err, files) {
+        var written=false;  //safegaurd against readstream.on('data') being called twice,as readstream reads files in chunks
+        var readstream = gfs.createReadStream({
+          filename:files[0].filename
+        });
+        readstream.on('data',function (data) {
+        if (!written) {
+          written=true;
+          pro_pic = data.toString('base64');
+        }
+        });
+        readstream.on('end',function () {
+          var userinfo = {
+            username : user.name,
+            description : user.description,
+            pro_pic : pro_pic
+          };
+          response.json({success:true, info:userinfo});
+        });
+        readstream.on('error',function () {
+          console.log('error');
+          response.json({success:false});
+        });
+      });//end find file`
+    };//end else
   });
 });
 
@@ -299,38 +675,6 @@ app.post('/upload/pic',multipartMiddleware, function(request,response){
     }else {
       response.send({success:true, uuid:uuid});
     }
-
-    //console.log("reached here!")
-    //var imgPath=path.join(__dirname,'/../client/img/recipe1-img1.jpeg');
-    // var file=request.files.file.path;
-    // console.log(file);
-    // //conn.once('open',function(){
-    //   //console.log("inside");
-    // var writestream=gfs.createWriteStream({
-    //    filename : request.files.file.name,
-    //    metadata : {recipeid:uuid}
-    // });
-    //
-    //   fs.createReadStream(file).pipe(writestream);
-    //   writestream.on('close',function(file){
-    //     console.log(file.filename+" written to DB");
-    //   });
-    //
-    // //
-    // // fs.createReadStream(file).pipe(writestream);
-    // // writestream.on('close',function(file){
-    // //   console.log(file.filename+" written to DB");
-    // // });
-    // // writeStream.on('close', function() {
-    // //   return response.status(200).send({
-    // //     message: 'Success'
-    // //   });
-    // //  });
-    //
-    //
-    // // writeStream.write(file.data);
-    // // writeStream.end();
-    // response.send(uuid);
 });
 
 
@@ -341,18 +685,21 @@ app.post('/upload/data',function(request,response){
     response.json({success : false, message : "Attach atleast one image/video"});
   }else{
     var recipe = new recipes({
+      recipe_id: formData.uuid,
       recipe_name : formData.recipeName,
       ingredients : formData.ingredients,
       method : formData.method,
-      likes : 0,
-      ratings : 0,
       comments : [],
       photos : [formData.uuid],
       videos : [formData.uuid],
-      date : "",
+      date : new Date(Date.now()).toDateString(),
       mealtype : formData.meal_type,
       cuisinetype : formData.cuisine_type,
-      uploader : formData.uploader
+      uploader : formData.uploader,
+      other_ingre:formData.other_ingred,
+      taste:formData.taste,
+      time:formData.time,
+      serves:formData.serves
     });
 
     recipe.save(function (err,recipe) {
@@ -361,7 +708,7 @@ app.post('/upload/data',function(request,response){
         response.json({success : false, message : "could not add recipe"});
       }
       if (recipe) {
-        console.log(recipe);
+        console.log("uploaded");
         response.json({success : true, message : "Recipe uploaded successfully"});
       }else {
         console.log("no docs affected");

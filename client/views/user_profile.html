@@ -1,12 +1,32 @@
+<div class="header-bar">
+  <a ui-sref="home" style="color:white; text-decoration:none"><img src="img/logo.png"/></a>
+  <span class="header-bar" ng-hide = "mainCtrl.isLoggedIn"><a ui-sref="login">
+    <button class="header-bar">Login</button></a>
+    <a ui-sref="signup">
+      <button class="header-bar">Sign Up</button></a>
+    </span>
+
+    <span class="header-bar" ng-show="mainCtrl.isLoggedIn">
+      <a ui-sref="user.profile({userID: mainCtrl.username})">
+        <img ng-controller='ProfileController as profileCtrl' ng-src="data:image/jpg;base64,{{profileCtrl.userInfo.pro_pic}}"
+              onerror="this.onerror=null;this.src='img/default.png';"
+              style="height:50px; width:50px;"/>
+        <!-- <img class="header-icon" src="img/user_profile.png"/> -->
+        <p class="header-bar">{{mainCtrl.username}}</p></a>
+      <button class="header-bar" ng-click="mainCtrl.logout()">Logout</button>
+    </span>
+</div>
 
 <div  class="tabs">
-  <ul class="nav">
+  <div class="left">
+  <ul class="nav navbar-nav side-nav">
     <li ng-class="{ active:tab.isSet(1) }" ng-click="tab.setTab(1)" ui-sref="user.profile">Profile</li>
     <li ng-class="{ active:tab.isSet(2) }" ng-click="tab.setTab(2)" ui-sref="home">Search Recipes</li>
-    <li ng-class="{ active:tab.isSet(3) }" ng-click="tab.setTab(3)" ui-sref="user.fav">Favorite Recipes</li>
+    <li ng-class="{ active:tab.isSet(3) }" ng-click="tab.setTab(3)" ui-sref="user.fav">Favourite Recipes</li>
     <li ng-class="{ active:tab.isSet(4) }" ng-click="tab.setTab(4)" ui-sref="user.add">Add a Recipe</li>
     <li ng-class="{ active:tab.isSet(5) }" ng-click="tab.setTab(5)" ui-sref="user.edit">Edit Profile</li>
   </ul>
+</div>
   <div class="content">
     <div ui-view></div>
   </div>
@@ -14,7 +34,7 @@
     <p>User can search recipes</p>
   </div>
   <div class="content" ng-show="tab.isSet(3)">
-     <p>User can see their favorite recipes</p>
+     <p>User can see their favourite recipes</p>
     <fav-recipes></fav-recipes>
   </div>
   <div class="content" ng-show="tab.isSet(4)">
@@ -28,11 +48,19 @@
 </div> -->
 
 <style>
+
+.left{
+  background-color: black;
+  width: 200px;
+  height: auto;
+}
+
 .tabs {
   position:relative;
-  border:1px solid #ccc;
-  background-color:#f1f1f1;
+  border-right: 1px solid #ccc;
+  background-color:black;
   width:100%;
+  height: 100%;
   box-shadow:0px 0px 40px rgba(0,0,0,0,0.2);
 }
 
@@ -40,32 +68,43 @@
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
-  background-color: inherit;
-  color: black;
+  background-color: black;
+  color: white;
+  height:100%;
   border-right:1px solid black;
   text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2);
-  width: 160px;
+  width: 200px;
 }
 
 
 .tabs .nav li {
-  list-style-type: none;
-  padding: 20px 0px 20px 0px;
-  text-align: center;
-  width: 200px;
-  cursor: pointer;
+  border-bottom: 1px solid #0d172e;
+  border-top: 1px solid #0d172e;
+  color: #ffffff;
+  display: block;
+  margin-right: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 5px;
+  padding: 20px 20px;
+  text-decoration: none;
 }
 
 .tabs .nav li:hover,
 .tabs .nav li.active {
-  background-color:#ddd;
+  background-color:black;
+  color:gold;
+  font-size: 18px;
+  border-left: 5px solid gold;
+  cursor: pointer;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
 }
 .tabs .content {
   padding: 20px 0px;
   position: absolute;
   top:0px;
-  left:160px;
+  left:200px;
+  background-color: #ddd;
   /* color:#6C5D5D; */
   overflow: hidden;
   width: calc(100% - 160px);

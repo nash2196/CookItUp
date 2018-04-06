@@ -4,16 +4,23 @@
 .icon-btn {margin-top:10px; margin-right: 10px;padding: 1px 15px 3px 2px; border-radius:50px;}
 </style>
 
-<div class="container-fluid">
+<div class="container-fluid"  ng-controller='ProfileController as profileCtrl'>
 <div class="usr-prof">
-        <img src="img/default.png" style="height:200px; width:200px;">
-  <p style="font-size:20px;text-align:left;">{{mainCtrl.username}}</p>
-  <p style="font-size:20px;text-align:left;">{{mainCtrl.userid}}</p>
+  <label>&nbsp;&nbsp;&nbsp;
+  <img ng-src="data:image/jpg;base64,{{profileCtrl.userInfo.pro_pic}}"
+        onerror="this.onerror=null;this.src='img/default.png';"
+        style="height:200px; width:200px;">
+      </label>
+      <label>
+  <p style="font-size:20px;text-align:left;">{{profileCtrl.userInfo.username}}</p>
+  <p style="font-size:20px;text-align:left;">{{profileCtrl.userid}}</p>
+  <p style="font-size:20px;text-align:left;">{{profileCtrl.userInfo.description}}</p>
+</label>
 </div>
 </div>
 <hr style="border-top: 1px dotted #8c8b8b;">
 
-<div class="container-fluid">
+<!-- <div class="container-fluid">
 <div class="div1" style="width:450px;height: 300px;padding:50px;border: 1px solid black; box-sizing:border-box;"></div>
 </div>
 <div class="container-fluid">
@@ -21,4 +28,34 @@
   <a class="btn icon-btn btn-info" href="#"><span class="glyphicon btn-glyphicon glyphicon-share img-circle text-info"></span>Share</a>
   <a class="btn icon-btn btn-danger" href="#"><span class="glyphicon btn-glyphicon glyphicon-trash img-circle text-danger"></span>Delete</a>
   <a class="btn icon-btn btn-primary" href="#"><span class="glyphicon btn-glyphicon glyphicon-edit img-circle text-primary"></span>Comment</a>
-</div>
+</div> -->
+
+
+<h2>&nbsp;&nbsp;&nbsp;Uploaded Recipes:</h2>
+
+
+<section ng-controller = "uploadedRecipesCtrl as upCtrl">
+
+  <div ng-show="!upCtrl.uploadedRecipes">No recipes to display.</div>
+  <div ng-show="upCtrl.uploadedRecipes" class="recipe" ng-repeat = "recipe in upCtrl.uploadedRecipes">
+    <!-- <a class="recipe" ui-sref="recipe-view({recipeID : recipe.recipe_name })"> -->
+        <div class="recp">
+        <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a class="recipe" ui-sref="recipe-view({recipeID : recipe.recipe_name })">
+          <img style="height : 200px; width:200px;"
+          ng-src="img/recipes/{{recipe.recipe_name}}.jpg"
+          onerror="this.onerror=null;this.src='img/no_img.png';" />
+        </label>          <!-- ng-repeat="image in recipeViewCtrl.recipe.images" -->
+          <label><p>Name: {{recipe.recipe_name|capitalize}}</p>
+          <p>Uploaded by: {{recipe.uploader|capitalize}}</p>
+          <p>Likes:{{recipe.liked_by.length}}</p>
+        </label>
+        </a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <label>
+          <button class="body-btn"  ng-click="mainCtrl.removeRecipe(recipe.recipe_id,mainCtrl.userid)">Remove</button>
+        </label>
+      </div>
+    <!-- </a> -->
+  </div>
+</section>

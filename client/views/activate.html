@@ -1,0 +1,22 @@
+<div class="header-bar">
+  <a ui-sref="home" style="color:white; text-decoration:none"><img src="img/logo.png"/></a>
+  <span class="header-bar" ng-hide = "mainCtrl.isLoggedIn"><a ui-sref="login">
+    <button class="header-bar">Login</button></a>
+    <a ui-sref="signup">
+      <button class="header-bar">Sign Up</button></a>
+    </span>
+
+    <span class="header-bar" ng-show="mainCtrl.isLoggedIn">
+      <a ui-sref="user.profile({userID: mainCtrl.username})"><img class="header-icon" src="img/user_profile.png"/><p class="header-bar">{{mainCtrl.username}}</p></a>
+      <button class="header-bar" ng-click="mainCtrl.logout()">Logout</button>
+    </span>
+</div>
+    <center>
+      <h1>Account Activation Page</h1><br/><br/>
+      <div>
+        Your account has been activated.
+      </div>
+    </center>
+
+    <!-- <label class="success" ng-show="mainCtrl.successMsg">{{mainCtrl.successMsg}}</label>
+    <label class="error" ng-show="mainCtrl.errorMsg">{{mainCtrl.errorMsg}}</label> -->

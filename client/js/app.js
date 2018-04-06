@@ -4,7 +4,7 @@ app.config(function ($httpProvider) {
   $httpProvider.interceptors.push('authInterceptors');
 });
 
-app.controller('MainController',function(authService,$timeout,$state,$transitions){
+app.controller('MainController',function(authService,$timeout,$state,$transitions,$http,$scope){
 
 
   $transitions.onStart({},() => {
@@ -53,9 +53,117 @@ app.controller('MainController',function(authService,$timeout,$state,$transition
     }else {
       $state.go('home');
     }
-
   };
+
+  this.addToFav=(recipeId,userId)=>{
+    this.successMsg=null;
+    this.errorMsg=null;
+  //  console.log("Reached in favCtrl");
+    var details={
+      recipeId : recipeId,
+      userId : userId
+    };
+    //console.log(details);
+    $http.post('/addFav',details)
+    .then((response) => {
+      if (response.data.success) {
+        this.successMsg = response.data.message;
+      }else {
+        this.errorMsg = response.data.message;
+      }
+    });
+  };
+
+  this.removeFav=(recipeId,userId)=>{
+    this.successMsg=null;
+    this.errorMsg=null;
+    console.log("remove recipe app.js");
+    console.log(recipeId+"  "+userId);
+    var details={
+      recipeId:recipeId,
+      userId:userId
+    };
+    $http.post('/removeFav',details)
+    .then((response)=>{
+      if (response.data.success) {
+        $state.reload();
+      }
+    });
+  };
+
+  this.removeRecipe=(recipeId,userId)=>{
+    this.successMsg=null;
+    this.errorMsg=null;
+    console.log("remove fav app.js");
+    console.log(recipeId+"  "+userId);
+    var details={
+      recipeId:recipeId,
+      userId:userId
+    };
+    $http.post('/removeRecipe',details)
+    .then((response)=>{
+      if (response.data.success) {
+        $state.reload();
+    }
+  });
+};
+
+
 });
+
+
+// app.controller('likeCtrl', ['$scope', function($scope) {
+//     $scope.like = {};
+//     $scope.like.votes = 0;
+//     $scope.doVote = function() {
+//       console.log("reached in like!");
+//       if ($scope.like.userVotes == 1) {
+//         delete $scope.like.userVotes;
+//         $scope.like.votes--;
+//       } else {
+//         $scope.like.userVotes = 1;
+//         $scope.like.votes++;
+//       }
+//     }
+//   }]);
+
+// app.controller("likeCtrl",function($scope){
+//   $scope.dislike = false;
+//   $scope.btnclass = "";
+//
+//   $scope.getlike=function(){
+//
+//     if($scope.dislike==false){
+//       $scope.likes += 1;
+//       $scope.dislike = true;
+//       $scope.btnclass = "btn-primary";
+//     }
+//     else{
+//       $scope.likes -= 1;
+//       $scope.dislike = false;
+//       $scope.btnclass = "";
+//     }
+//   }
+// });
+
+
+app.controller('ProfileController',function ($http,authService) {
+  authService.getUser().then((response) => {
+    this.successMsg=null;
+    this.errorMsg=null;
+    this.userid = response.data.email;
+    $http.get('/details/'+this.userid)
+    .then((response)=>{
+      if (response.data.success) {
+        this.userInfo = response.data.info;
+        console.log(this.userInfo.username);
+      }else {
+        this.errorMsg = response.data.message;
+      };
+    });
+  });
+});
+
 
 // app.controller('HeaderController',function($stateParams,authService){
 //   this.loggedIn = $stateParams;
@@ -101,8 +209,6 @@ app.controller('SignupController',function($state,$http,$timeout){
 
 app.controller('EditProfileController',function (Upload,$http,$timeout,$state,authService) {
 
-
-
   authService.getUser().then((response) => {
     this.successMsg=null;
     this.errorMsg=null;
@@ -146,6 +252,12 @@ app.controller('EditProfileController',function (Upload,$http,$timeout,$state,au
     });
   };
 
+  // this.removeProPic=(userId)=>{
+  //   this.userid=userId
+  //   $http.post('/removeProPic',this.userId).then((response)=>{
+  //     this.removedPicMsg=response.data.message;
+  //   });
+  // }
 
   this.uploadPic = (file,userid) => {
     file.upload = Upload.upload({
@@ -217,6 +329,38 @@ app.controller('MealController',function($http, valueService){
 });
 
 
+app.controller('uploadedRecipesCtrl',function($http,authService){
+  authService.getUser().then((response) => {
+    this.userid = response.data.email;
+  //  this.favRecipes=[];
+//    console.log("auth"+this.userid);
+    $http.get('/uploadedRecipes/'+this.userid).then((response)=>{
+      this.uploadedRecipes=response.data;
+      console.log("uploadedRecipesCtrl: "+this.uploadedRecipes);
+    });
+  });
+});
+
+
+app.controller('favController',function($http,authService){
+  authService.getUser().then((response) => {
+
+    this.userid = response.data.email;
+  //  this.favRecipes=[];
+    console.log("auth"+this.userid);
+    $http.get('/favRecipes/'+this.userid).then((response)=>{
+      this.favRecipes=response.data;
+      console.log("favCtrl: "+this.favRecipes);
+    });
+  });
+});
+
+app.filter('capitalize', function() {
+    return function(input) {
+      return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
+    }
+});
+
 app.controller('RecipeController',function($http, valueService){
 
   $http.get('/recipes').then((response)=>{
@@ -224,7 +368,24 @@ app.controller('RecipeController',function($http, valueService){
   });
   // this.recipes = recipes
 
-  this.searchRecipe = () => {
+  // this.searchByName=(keyword)=>{
+  //   console.log("Button clicked");
+  //   this.keyword=keyword;
+  //   console.log(this.keyword);
+  //   this.selectedRecipe=this.recipes;
+  //   console.log(this.selectedRecipe);
+  //   return this.selectedRecipe;
+  // };
+
+  this.searchRecipe = (keyword=undefined) => {
+
+    if(keyword!=undefined){
+      console.log(keyword);
+      this.keyword=keyword;
+      this.selectedRecipe=this.recipes;
+      //console.log(this.selectedRecipe);
+      return this.selectedRecipe;
+    }else{
 
     var _ingredients = valueService.getIngr();
     var _meal = valueService.getMeal();
@@ -240,7 +401,8 @@ app.controller('RecipeController',function($http, valueService){
         var temp = searchByIngredients(_ingredients);
         this.selectedRecipe = searchByMealCuisine(_meal,_cuisine,temp);
     }//end else
-  };//end searchRecipe
+  }
+};//end searchRecipe
 
   var searchByMealCuisine = (meal,cuisine,temp) => {
 
@@ -311,6 +473,8 @@ app.controller('RecipeController',function($http, valueService){
 
 });
 
+
+
 app.controller('FormController', function(Upload,$http,$timeout,$state,valueService){
 
   var uuid = null;
@@ -365,9 +529,12 @@ this.uploadData = (form,userid) => {
     cuisine_type:form.selectCuisine,
     method: form.method,
     time: form.time,
-    serves: form.serve,
+    serves: form.serves,
     taste: form.taste,
-    uploader : userid
+    uploader : userid,
+    other_ingre:form.other_ingre,
+    likes: 0
+
   };
 
   console.log(formData);

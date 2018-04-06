@@ -1,9 +1,11 @@
+<body ng-app="validationApp" ng-controller="mainController">
 
 <div class="container">
 
-<form ng-controller="EditProfileController as editCtrl" ng-model = "editForm" ng-submit="editCtrl.doEdit(editForm,mainCtrl.userid)">
+<form name="userForm" ng-controller="EditProfileController as editCtrl" ng-model = "editForm" ng-submit="editCtrl.doEdit(editForm,mainCtrl.userid)">
   &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<img id="blah" ngf-thumbnail="pic || 'img/addrecipe.png'" style="width:200px;height:150px;border:double; border-radius:4px;"/></br></br>
   <label>Change Profile Photo:</label>&ensp;<input type='file' ng-model="pic" name="file" ngf-select ngf-accept="'image/*'">
+  <label>
   <button ng-click="editCtrl.uploadPic(pic,mainCtrl.userid)">Upload</button>
   <span class="progress" ng-show="!pic.errorMsg && pic.progress >= 0">
       <div style="width:{{pic.progress}}%" ng-bind="pic.progress + '%'"></div>
@@ -11,16 +13,44 @@
 
   <span ng-show="pic.result">Done!</span>
   <span ng-show="pic.errorMsg">OOPS! {{pic.errorMsg}}</span><br><br>
+</label>
 
+<!-- <label>
+  <button ng-click="editCtrl.removeProPic(mainCtrl.userid)">Remove current picture</button>
+  <span ng-show="editCtrl.removedPicMsg">Picture removed! {{editCtrl.removedPicMsg}}</span><br><br>
+</label> -->
+
+
+
+  <div class="form-group" ng-class="{ 'has-error' :
+             userForm.name.$invalid && !userForm.name.$pristine }">
 <label>User Name:</label>
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="text" placeholder="{{editCtrl.userInfo.username}}" ng-model="editForm.name"></br></br>
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type="text" placeholder="{{editCtrl.userInfo.username}}" ng-model="editForm.name" name="name" ng-maxlength="30" ng-minlength="6"></br></br>
+<span ng-show="userForm.name.$error.minlength" class="help-block">
+   Name is too short!
+</span>
+<span ng-show="userForm.name.$error.maxlength" class="help-block">
+  Name is too long!
+</span>
+</div>
+
 <label><b>Change Password</b><input type="checkbox" ng-model="checked"/><br>
+  <div class="form-group" ng-class="{ 'has-error' :
+               userForm.password.$invalid && !userForm.password.$pristine }">
 <label>Current Password:</label>
-&ensp;<input type="password" placeholder="Enter the current password" ng-model="editForm.curpswd" ng-disabled="!checked" required></br></br>
-<label>New Password:</label>
-&ensp;&ensp;&ensp;<input type="password" placeholder="Enter the new password" ng-model="editForm.newpswd" ng-disabled="!checked" required></br></br>
-<label>Confirm Password:</label>
-<input type="password" placeholder="Enter the new passoword again" ng-model="editForm.cnfrmpswd" ng-disabled="!checked" required></br></br>
+&ensp;<input type="password" placeholder="Enter the current password" name="password" ng-model="editForm.curpswd" ng-disabled="!checked" ng-minlength="6" ng-maxlength="15" required></br></br>
+<span ng-show="userForm.password.$dirty && userForm.password.$error.required" class="help-block">Password is required.</span>
+<span ng-show="userForm.password.$invalid && !userForm.password.$pristine"
+               class="help-block">Password must be between 6-15 characters!</span>
+        </div>        </br></br>
+        <div class="form-group" ng-class="{ 'has-error' :
+                     userForm.password1.$invalid && !userForm.password1.$pristine }">
+      <label>New Password:</label>
+&ensp;&ensp;&ensp;<input type="password" placeholder="Enter the new password" name="password1" ng-minlength="6" ng-maxlength="15" ng-model="editForm.newpswd" ng-disabled="!checked" required></br></br>
+<label>Confirm New Password:</label>
+<input type="password" name="cpassword1" placeholder="Enter the new passoword again" ng-model="editForm.cnfrmpswd" ng-disabled="!checked" required></br></br>
+<span ng-show=" userForm.password1.$viewValue != '' && (userForm.password1.$viewValue != userForm.cpassword1.$viewValue)      ">Fields do not match!</span></br></br>
+</div>
 <label>Edit Description:</label>
 &ensp;&ensp;<input type="text" cols="70" rows="20" placeholder="{{editCtrl.userInfo.description}}" ng-model="editForm.description"></br></br>
 <input type="submit" name="button" value="Submit">
@@ -28,5 +58,5 @@
 <label class="success" ng-show="editCtrl.successMsg">{{editCtrl.successMsg}}</label>
 <label class="error" ng-show="editCtrl.errorMsg">{{editCtrl.errorMsg}}</label>
 </div>
-<!-- </body>
-</html> -->
+</body>
+<!-- </html> --> -->

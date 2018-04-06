@@ -22578,11 +22578,11 @@ function sliceFn(input, begin, end) {
            <table class="friends">
              <tr>
                <th>Name</th>
-               <th>Favorite Letter</th>
+               <th>favourite Letter</th>
              </tr>
-             <tr ng-repeat="friend in friends | orderBy:'favoriteLetter':false:localeSensitiveComparator">
+             <tr ng-repeat="friend in friends | orderBy:'favouriteLetter':false:localeSensitiveComparator">
                <td>{{friend.name}}</td>
-               <td>{{friend.favoriteLetter}}</td>
+               <td>{{friend.favouriteLetter}}</td>
              </tr>
            </table>
          </div>
@@ -22591,11 +22591,11 @@ function sliceFn(input, begin, end) {
            <table class="friends">
              <tr>
                <th>Name</th>
-               <th>Favorite Letter</th>
+               <th>favourite Letter</th>
              </tr>
-             <tr ng-repeat="friend in friends | orderBy:'favoriteLetter'">
+             <tr ng-repeat="friend in friends | orderBy:'favouriteLetter'">
                <td>{{friend.name}}</td>
-               <td>{{friend.favoriteLetter}}</td>
+               <td>{{friend.favouriteLetter}}</td>
              </tr>
            </table>
          </div>
@@ -22605,11 +22605,11 @@ function sliceFn(input, begin, end) {
        angular.module('orderByExample4', [])
          .controller('ExampleController', ['$scope', function($scope) {
            $scope.friends = [
-             {name: 'John',   favoriteLetter: 'Ä'},
-             {name: 'Mary',   favoriteLetter: 'Ü'},
-             {name: 'Mike',   favoriteLetter: 'Ö'},
-             {name: 'Adam',   favoriteLetter: 'H'},
-             {name: 'Julie',  favoriteLetter: 'Z'}
+             {name: 'John',   favouriteLetter: 'Ä'},
+             {name: 'Mary',   favouriteLetter: 'Ü'},
+             {name: 'Mike',   favouriteLetter: 'Ö'},
+             {name: 'Adam',   favouriteLetter: 'H'},
+             {name: 'Julie',  favouriteLetter: 'Z'}
            ];
 
            $scope.localeSensitiveComparator = function(v1, v2) {
@@ -22649,7 +22649,7 @@ function sliceFn(input, begin, end) {
        var container = element(by.css('.custom-comparator'));
        var names = container.all(by.repeater('friends').column('friend.name'));
 
-       it('should sort friends by favorite letter (in correct alphabetical order)', function() {
+       it('should sort friends by favourite letter (in correct alphabetical order)', function() {
          expect(names.get(0).getText()).toBe('John');
          expect(names.get(1).getText()).toBe('Adam');
          expect(names.get(2).getText()).toBe('Mike');
@@ -26080,31 +26080,31 @@ var CONSTANT_VALUE_REGEXP = /^(true|false|\d+)$/;
           angular.module('valueExample', [])
             .controller('ExampleController', ['$scope', function($scope) {
               $scope.names = ['pizza', 'unicorns', 'robots'];
-              $scope.my = { favorite: 'unicorns' };
+              $scope.my = { favourite: 'unicorns' };
             }]);
        </script>
         <form ng-controller="ExampleController">
-          <h2>Which is your favorite?</h2>
+          <h2>Which is your favourite?</h2>
             <label ng-repeat="name in names" for="{{name}}">
               {{name}}
               <input type="radio"
-                     ng-model="my.favorite"
+                     ng-model="my.favourite"
                      ng-value="name"
                      id="{{name}}"
-                     name="favorite">
+                     name="favourite">
             </label>
-          <div>You chose {{my.favorite}}</div>
+          <div>You chose {{my.favourite}}</div>
         </form>
       </file>
       <file name="protractor.js" type="protractor">
-        var favorite = element(by.binding('my.favorite'));
+        var favourite = element(by.binding('my.favourite'));
 
         it('should initialize to model', function() {
-          expect(favorite.getText()).toContain('unicorns');
+          expect(favourite.getText()).toContain('unicorns');
         });
         it('should bind the values to the inputs', function() {
-          element.all(by.model('my.favorite')).get(0).click();
-          expect(favorite.getText()).toContain('pizza');
+          element.all(by.model('my.favourite')).get(0).click();
+          expect(favourite.getText()).toContain('pizza');
         });
       </file>
     </example>
