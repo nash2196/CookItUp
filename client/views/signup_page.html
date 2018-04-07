@@ -1,21 +1,59 @@
+<body ng-app="validationApp" ng-controller="mainController">
+
+<div class="header-bar">
+  <a ui-sref="home" style="color:white; text-decoration:none"><img src="img/logo.png"/></a>
+  <span class="header-bar" ng-hide = "mainCtrl.isLoggedIn"><a ui-sref="login">
+    <button class="header-bar">Login</button></a>
+    <a ui-sref="signup">
+      <button class="header-bar">Sign Up</button></a>
+    </span>
+
+    <span class="header-bar" ng-show="mainCtrl.isLoggedIn">
+      <a ui-sref="user.profile({userID: mainCtrl.username})"><img class="header-icon" src="img/user_profile.png"/><p class="header-bar">{{mainCtrl.username}}</p></a>
+      <button class="header-bar" ng-click="mainCtrl.logout()">Logout</button>
+    </span>
+</div>
+
 <div class="container">
   <center>
     <img src="img/signup.png" width="100px" height="100px"></img>
-      <form name="signupForm" ng-controller="SignupController as signupCtrl" ng-submit="signupCtrl.doSignup(signupForm)">
+      <form novalidate name="signupForm" ng-controller="SignupController as signupCtrl" ng-submit="signupCtrl.doSignup(signupForm)">
+        <div class="form-group" ng-class="{ 'has-error' :
+             signupForm.userName.$invalid && !signupForm.userName.$pristine }">
         <label>Enter your email id:</label>
-        <input type="email" id="email" placeholder="Enter your email-id" ng-model="signupForm.email" required><br/><br/>
+        <input type="email" id="id" name="userName" ng-model="signupForm.email" placeholder="Enter your email-id" required>
+        <span ng-show="signupForm.userName.$invalid && !signupForm.userName.$pristine" class="help-block">
+              Enter a valid email.
+            </span>
+        </div>
+        <div class="form-group" ng-class="{ 'has-error' :
+                   signupForm.name.$invalid && !signupForm.name.$pristine }">
         <label>Enter your name:&nbsp;&nbsp;&ensp;</label>
-        <input type="text" id="uname" placeholder="Enter your name" ng-model="signupForm.uname" required><br/><br/>
+        <input type="text" id="uname" name="name" ng-model="signupForm.uname" placeholder="Enter your name" ng-minlength="6" ng-maxlength="20" required>
+        <span ng-show="signupForm.name.$error.minlength" class="help-block">
+           Name is too short.
+        </span>
+        <span ng-show="signupForm.name.$error.maxlength" class="help-block">
+          Name is too long.
+        </span>
+    </div>
+    <div class="form-group" ng-class="{ 'has-error' :
+                 signupForm.pass_word.$invalid && !signupForm.pass_word.$pristine }">
         <label>Enter password:&ensp;&ensp;&nbsp; </label>
-        &nbsp; <input type="password" id="pswd" placeholder="Enter password" ng-model="signupForm.pswd" required><br/><br/>
+        &nbsp; <input type="password" id="pswd" name="pass_word" ng-model="signupForm.pswd" placeholder="Enter password" ng-minlength="6" ng-maxlength="15" required>
+        <span ng-show="signupForm.pass_word.$invalid && !signupForm.pass_word.$pristine" class="help-block">Password must be between 6-15 characters!</span>
+                  <br/>
         <label>Confirm password:                 </label>
-        &nbsp;&nbsp;<input type="password" id="cpswd" placeholder="Re-write your password" ng-model="signupForm.cpswd" required><br/><br/>
+        &nbsp;&nbsp;<input type="password" id="cpswd" name="confirmpswd" ng-model="signupForm.cpswd" placeholder="Re-write your password" required>
+<span ng-show=" signupForm.pass_word.$viewValue != '' && (signupForm.pass_word.$viewValue != signupForm.confirmpswd.$viewValue)      ">Fields do not match!</span></br></br>
+</div>
         <button type="submit" class="body-btn">Sign Up</button><br/>
         <label class="error" ng-show="signupCtrl.errorMsg">{{signupCtrl.errorMsg}}</label>
         <label class="success" ng-show="signupCtrl.successMsg">{{signupCtrl.successMsg}}</label>
       </form>
     </center>
 </div>
+</body>
 <!--
   </body>
   </html> -->

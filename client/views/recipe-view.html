@@ -1,38 +1,140 @@
+<head>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
+
+<style>
+.form label{
+  font-weight: bold;
+}
+.form span{
+  font-size: 20px;
+  font-weight: normal;
+}
+
+body{
+  background: linear-gradient(to bottom,  #fff 0%, #eee 100%);
+  font-size: 4em;
+  height: 100vh;
+  .content{
+    margin: 30% auto;
+    text-align: center;
+    a{
+      color: gray;
+      text-decoration: none !important;
+      .glyphicon{
+        transition: all .5s;
+        &.glyphicon-heart{
+          color: #e74c3c;
+        }
+        &.glyphicon-heart-empty{
+          &:hover{
+            transform:scale(1.1);
+          }
+        }
+      }
+    }
+  }
+}
+
+</style>
+</head>
+
+<div class="header-bar">
+  <a ui-sref="home" style="color:white; text-decoration:none"><img src="img/logo.png"/></a>
+  <span class="header-bar" ng-hide = "mainCtrl.isLoggedIn"><a ui-sref="login">
+    <button class="header-bar">Login</button></a>
+    <a ui-sref="signup">
+      <button class="header-bar">Sign Up</button></a>
+    </span>
+
+    <span class="header-bar" ng-show="mainCtrl.isLoggedIn">
+      <a ui-sref="user.profile({userID: mainCtrl.username})"><img class="header-icon" src="img/user_profile.png"/><p class="header-bar">{{mainCtrl.username}}</p></a>
+      <button class="header-bar" ng-click="mainCtrl.logout()">Logout</button>
+    </span>
+</div>
+
 <div class="container">
-<h3>{{recipeViewCtrl.recipe.recipe_name}}</h3>
+<h1><i><b>{{recipeViewCtrl.recipe.recipe_name}}</b></i></h1>
 
 <img style="height : 300px; width:300px;"
 ng-repeat="image in recipeViewCtrl.recipe.images"
 ng-src="data:{{image.filetype}};base64,{{image.data}}"
-onerror="this.onerror=null;this.src='img/no_img.png';"/>
+onerror="this.onerror=null;this.src='img/no_img.png';" />
 
-  <div>
-    <b>Created By : </b><label>{{recipeViewCtrl.recipe.uploader}}</label>
+<!-- <video style="height:300px; width:300px;"
+ng-repeat="video in recipeViewCtrl.recipe.videos"
+ng-src="data:{{video.filetype}};base64,{{video.data}}" /> -->
+<!--
+<video width="300" height="300" controls>
+  <source src="movie.mp4" type="video/mp4">
+  <source src="movie.ogg" type="video/ogg">
+  Your browser does not support the video tag.
+</video> -->
+<div style="font-size:14px">Posted on:{{recipeViewCtrl.recipe.date}}</div>
+<div class="form">
+<div><img ng-src="/img/chef_icon.png">&nbsp;<label>Chef: </label><i><span>{{recipeViewCtrl.recipe.uploader}}</i></span></div>
+<div><img ng-src="/img/serve_icon.png">&nbsp;<label><b>Recipe Servings:</label><span> {{recipeViewCtrl.recipe.serves}}</div></span>
+<div><img ng-src="/img/time_icon.png">&nbsp;<label>Cooking Time:</label><span style="font-weight:normal;"> 02:00 hours</div></span>
+<!-- <div><img ng-src="/img/like.png" width="50px" height="50px">&nbsp;<label> {{recipeViewCtrl.recipe.liked_by.length}}</div> -->
+<div><label>Taste :</label><span>{{recipeViewCtrl.recipe.taste}}</div></span>
+</div>
+
+<div ng-show="!mainCtrl.userid">
+  <div class="content">
+    <i class="glyphicon" ng-class="'glyphicon-heart'"></i>
+    <span>{{recipeViewCtrl.recipe.liked_by.length}}</span>
   </div>
-  <button class="like-btn">Likes:{{recipeViewCtrl.recipe.likes}}</button>
-  <div>
-    <b>Ingredients used : </b><label><i>{{recipeViewCtrl.recipe.ingredients.join(",")}}</i></label>
+</div>
+
+<div ng-show="mainCtrl.userid">
+  <div class="content">
+    <a ng-click="recipeViewCtrl.recipe.likeFunc(mainCtrl.userid,recipeViewCtrl.recipe.recipe_id)">
+      <i class="glyphicon" ng-class="(recipeViewCtrl.getLikeStatus(mainCtrl.userid))==1 ? 'glyphicon-heart' : 'glyphicon-heart-empty'"></i>
+      <span ng-model="count">{{count}}</span>
+    </a>
   </div>
-  <div>
-    <b>Preparation Method : </b>
-    <p style="font-size : 20px;">{{recipeViewCtrl.recipe.method}}</p>
-    <!-- <ul>
-      <li ng-repeat = "step in recipeViewCtrl.recipe.method">{{step}}</li>
-    </ul> -->
+</div>
+
+<button class="body-btn" ng-hide="!mainCtrl.userid || recipeViewCtrl.recipe.uploader==mainCtrl.userid" ng-click="mainCtrl.addToFav(recipeViewCtrl.recipe.recipe_id,mainCtrl.userid)"> Add to favourites</button>
+<label class="success" ng-show="mainCtrl.successMsg">{{mainCtrl.successMsg}}</label>
+<label class="error" ng-show="mainCtrl.errorMsg">{{mainCtrl.errorMsg}}</label>
+<div ng-show="recipeViewCtrl.recipe.recipe_name=='Apple Juice'">
+<center><video width="500" height="400" controls>
+  <source src="img/applejuice.mp4" type="video/mp4">
+  <!-- <source src="movie.ogg" type="video/ogg"> -->
+</video>
+</center>
+</div>
+
+
+ <!-- <button class="btn {{btnclass}}" ng-click="mainCtrl.getlike(recipeViewCtrl.recipe.recipe_id,mainCtrl.userid)" ng-init="likes=0;"><i class="fa fa-thumbs-o-up"></i> Like</button>
+ <h4>Like : <span>{{likes}}</span></h4> -->
+<!-- <button class="like-btn" ng-hide="!mainCtrl.userid || recipeViewCtrl.recipe.uploader==mainCtrl.userid">Likes:{{recipeViewCtrl.recipe.likes}}</button> -->
+
+<!-- <button class="body-btn" ng-hide="!mainCtrl.userid || recipeViewCtrl.recipe.uploader==mainCtrl.userid || " ng-click="mainCtrl.removeFav">Remove from favourites<button/> -->
+
+</div>
+  <div class="container">
+    <label class="form">Ingredients used : </label><i><span style="font-size:20px; font-weight:normal;">{{recipeViewCtrl.recipe.ingredients.join(",")}}</i></span><br/><br/>
+  <div ng-hide="!recipeViewCtrl.recipe.other_ingre">
+    <b>Other ingredients required :</b><label><i>{{recipeViewCtrl.recipe.other_ingre}}</i></label><br/><br/>
   </div>
+    <label class="form">Preparation Method : </label>
+    <p style="font-size : 20px; white-space:pre-wrap; font-weight:normal;">{{recipeViewCtrl.recipe.method}}</p>
 
   <!-- Comments -->
-  <div class="container">
-    <label>Comments</label>
+  <div class="comment" style="box-sizing:border-box; background-color:#ccc; border:1px solid grey;border-radius:8px;padding-left:5px; padding-bottom:10px;">
+    <label class="form">Comments:</label>
     <div class="comments">
       <ul>
         <li ng-repeat = "comment in recipeViewCtrl.recipe.comments">
-          <label><b>{{comment.userid}}</b> : {{comment.body}}</label>
+          <label><b>{{comment.userid}}</b> :<span style="font-weight:normal;"> {{comment.body}}</span></label>
         </li>
       </ul>
     </div>
-    <label ng-show="mainCtrl.isLoggedIn"><b>{{mainCtrl.userid}}</b> : </label>
-    <input class="comments" type="text" ng-model="recipeViewCtrl.userComment" placeholder="Share Your views"/>
+    <div ng-show="mainCtrl.userid">
+    <label><b>{{mainCtrl.userid}}</b> : </label>
+    <input style="font-size:24px;" class="comments" type="text" ng-model="recipeViewCtrl.userComment" placeholder="Share Your views"/>
     <button ng-click="recipeViewCtrl.recipe.addComment(mainCtrl.userid,recipeViewCtrl.userComment)" class="comment-btn">Submit</button>
     <label ng-show="recipeViewCtrl.commentSuccess">Done!</label>
     <label ng-show="recipeViewCtrl.commentError">Error!<label>

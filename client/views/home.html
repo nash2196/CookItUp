@@ -1,17 +1,85 @@
+<style>
+
+.recp{
+  box-sizing: content-box;
+  background-color:#696969;
+  margin-bottom: 20px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  margin-top: 20px;
+  margin-left: 20px;
+  margin-right: 30px;
+  padding-left: 20px;
+  border-radius: 18px;
+}
+
+.recp p{
+  padding-bottom: 5px;
+  color: white;
+}
+
+</style>
+
+<div class="header-bar">
+  <div class="sec1">
+  <a ui-sref="home" style="color:white; text-decoration:none"><img src="img/logo.png"/></a>
+  <span class="header-bar" ng-hide = "mainCtrl.isLoggedIn"><a ui-sref="login">
+    <button class="header-bar">Login</button></a>
+    <a ui-sref="signup">
+      <button class="header-bar">Sign Up</button></a>
+    </span>
+
+    <span class="header-bar" ng-show="mainCtrl.isLoggedIn">
+      <a ui-sref="user.profile({userID: mainCtrl.username})">
+        <!-- <div ng-show="mainCtrl.isLoggedIn" ng-controller='ProfileController as profileCtrl'>
+        <img ng-src="data:image/jpg;base64,{{profileCtrl.userInfo.pro_pic}}"
+              onerror="this.onerror=null;this.src='img/default.png';"
+              style="height:50px; width:50px;"/>
+        </div> -->
+        <img class="header-icon" src="img/user_profile.png"/>
+        <p class="header-bar">{{mainCtrl.username}}</p></a>
+      <button class="header-bar" ng-click="mainCtrl.logout()">Logout</button>
+    </span>
+</div>
+</div>
+
+<div class="sec1">
+</div>
+
 <div class="floatleft">
     <form class="homepage" name = "ingrForm" ng-controller = "IngrController as ingrCtrl">
-      <h5>Select your ingredients</h5><hr>
+      <h3>Select your ingredients</h3><hr>
       <p ng-hide="ingrCtrl.selected.length===0">You have selected : {{ingrCtrl.selected.join(",") }}</p>
       <div ng-repeat = "type in ingrCtrl.types">
         <label class="details" align="left" ng-click="ingrCtrl.selectDetail(type.type)" ng-style= "{'background-image' : 'url( /img/details/{{type.type}}.jpg)'}">{{type.type | uppercase}}</label>
-        <div class="summary" ng-show="ingrCtrl.detailsIsSelected(type.type)">
+        <div class="summary" style="background-color:#ddd;" ng-show="ingrCtrl.detailsIsSelected(type.type)">
           <label ng-repeat = "option in type.options">
-            <input type="checkbox" name = "selectIngr" value="{{option.ingredient_name}}" ng-click="ingrCtrl.checkIngr(option.ingredient_name)">{{option.ingredient_name}}</input>
+            <input type="checkbox" name = "selectIngr" value="{{option.ingredient_name}}" ng-click="ingrCtrl.checkIngr(option.ingredient_name)">{{option.ingredient_name|capitalize}}</input>
           </label>
         </div>
       </div>
       <!-- <center><button class="header-bar" >Search</button></center> -->
     </form>
+</div><br/>
+
+<section ng-controller="RecipeController as recipeCtrl">
+<div class="floatright">
+  <input type="=text" placeholder="Search recipe..." ng-model="search.recipe_name" >
+  <button ng-click="recipeCtrl.searchRecipe(search.recipe_name)" class="body-btn" type="button">Search</button>
+  <!-- <div class="recipe" ng-repeat = "recipe in recipeCtrl.selectedRecipe | filter:recipeCtrl.keyword">
+    <div class="recp">
+    <a class="recipe" ui-sref="recipe-view({recipeID : recipe.recipe_name })">
+      <img style="height : 100px; width:100px;"
+      ng-src="data:{{recipe.thumbnail[0].filetype}};base64,{{recipe.thumbnail[0].data}}"
+      onerror="this.onerror=null;this.src='img/no_img.png';" />
+      Photos: {{recipe.thumbnail[0]}} -->
+      <!-- ng-repeat="image in recipeViewCtrl.recipe.images" -->
+      <!-- <p>Name: {{recipe.recipe_name}}</p>
+      <p>Uploaded by: {{recipe.uploader}}</p>
+      <p>Likes:{{recipe.likes}}</p>
+    </a>
+  </div>
+  </div> -->
 </div>
 <div class="floatright">
     <form class="homepage" name = "mealForm" ng-controller = "MealController as mealCtrl">
@@ -27,15 +95,23 @@
       &ensp;
     </form>
 
-    <section ng-controller = "RecipeController as recipeCtrl">
+    <!-- <section ng-controller = "RecipeController as recipeCtrl"> -->
 
-      <div class="mainSearch" ng-click = "recipeCtrl.searchRecipe()">Let's Go!</div>
-      <div class="recipe" ng-repeat = "recipe in recipeCtrl.selectedRecipe">
-        <a class="recipe" ui-sref="recipe-view({recipeID : recipe.recipe_name })">
-          <p>Name: {{recipe.recipe_name}}</p>
-          <p>Uploaded by: {{recipe.uploader}}</p>
-          <p>Likes:{{recipe.likes}}</p>
+      <center><div class="mainSearch" ng-click = "recipeCtrl.searchRecipe()">Let's Go!</div></center>
+      <div class="recipe" ng-repeat = "recipe in recipeCtrl.selectedRecipe | filter:search">
+        <div class="recp">
+        <label>
+          <a class="recipe" ui-sref="recipe-view({recipeID : recipe.recipe_name })">
+          <img style="height : 200px; width:200px;"
+          ng-src="img/recipes/{{recipe.recipe_name}}.jpg"
+          onerror="this.onerror=null;this.src='img/no_img.png';" />
+        </label>          <!-- ng-repeat="image in recipeViewCtrl.recipe.images" -->
+          <label><p>Name: {{recipe.recipe_name|capitalize}}</p>
+          <p>Uploaded by: {{recipe.uploader|capitalize}}</p>
+          <p>Likes:{{recipe.liked_by.length}}</p>
+        </label>
         </a>
+      </div>
       </div>
     </section>
 </div>

@@ -32,11 +32,63 @@ app.config(($stateProvider,$urlRouterProvider)=>{
         return $http.get('/images/'+$stateParams.recipeID);
       }
     },
-    controller : function($http,$timeout,$state,getRecipe,getImages) {
+    controller : function($scope,$http,$timeout,$state,getRecipe,getImages) {
       this.recipe = getRecipe.data;
       this.recipe.images = getImages.data.images;
       this.commentSuccess=false;
       this.commentError=false;
+      $scope.count=this.recipe.liked_by.length;
+      var flag=0;
+      //$scope.like=0;
+      this.getLikeStatus=(userid)=>{
+        console.log(this.recipe.liked_by);
+        for(var i=0;i<this.recipe.liked_by.length;i++){
+          console.log(i+"  "+this.recipe.liked_by[i]);
+          if(this.recipe.liked_by[i]==userid){
+            console.log("match found!");
+            return flag=1;
+          }
+          // else{
+          //   console.log("match not found!");
+          //   return 0;
+          // }
+        }
+      };
+
+      this.recipe.likeFunc=(userid,recipeid)=>{
+        // console.log(userid+"  "+recipeid);
+        //   console.log("reached in like!");
+        $http.post('/recipe/doLike',{recipeID:recipeid,userID:userid})
+        .then((response)=>{
+          if(response.data.action=="like"){
+            $scope.count++;
+          }
+          else{
+            //$scope.like=0;
+            $scope.count--;
+          }
+          $timeout(()=>{
+            $state.reload();
+          });
+          });
+        };
+        // $scope.like = {};
+        // $scope.like.votes = 0;
+        //
+        // console.log(userid+"  "+recipeid);
+        //   console.log("reached in like!");
+        //   this.recipe.likes++;
+        //   $timeout(()=>{
+        //     $state.reload();
+        //   },2000);
+          // if ($scope.like.userVotes == 1) {
+          //   delete $scope.like.userVotes;
+          //   $scope.like.votes--;
+          // } else {
+          //   $scope.like.userVotes = 1;
+          //   $scope.like.votes++;
+          // }
+
       this.recipe.addComment = (userid,comment) => {
          $http.post('/recipe/comment',{recipeID : this.recipe.recipe_name,userID : userid,comment : comment})
          .then((response)=>{
@@ -51,11 +103,8 @@ app.config(($stateProvider,$urlRouterProvider)=>{
            };
          });
       };
-
-
     },
     controllerAs : 'recipeViewCtrl'
-
   })
 
   .state('user', {
@@ -99,6 +148,17 @@ app.config(($stateProvider,$urlRouterProvider)=>{
     templateUrl : '/views/profile.html',
     authenticated : true
   })
+
+  // .state('activate', {
+  //   url : '/activate/:token',
+  //   templateUrl : '/views/activate.html',
+  //   //authenticated : false,
+  //   controller : function () {
+  //       console.log("Reached in emailCtrl!");
+  //   },
+  //   controllerAs : 'emailCtrl',
+  //
+  // })
 
 });
 
