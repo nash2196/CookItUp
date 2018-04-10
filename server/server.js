@@ -358,8 +358,8 @@ app.post('/signup',function(request,response){
               from: 'Cookitup.com, cookitup@localhost.com',
               to: user.userid,
               subject: 'Cookitup: Activation link',
-              text: 'Hello '+user.name+', thank you for joining Cookitup. Please click on the following link to activate your Cookitup account: http://localhost:8181/activate/'+user.temporaryToken,
-              html: 'Hello<strong> '+user.name+'</strong>,<br/><br/>Thank you for joining Cookitup.<br/>Please click on the link below to activate your Cookitup account:<br/></br><a href="http://localhost:8181/activate/'+user.temporaryToken+'">http//localhost:8181/activate/</a>'
+              text: 'Hello '+user.name+', thank you for joining Cookitup. Please click on the following link to activate your Cookitup account: http://localhost:8181/#!/activate/'+user.temporaryToken,
+              html: 'Hello<strong> '+user.name+'</strong>,<br/><br/>Thank you for joining Cookitup.<br/>Please click on the link below to activate your Cookitup account:<br/></br><a href="http://localhost:8181/#!/activate/'+user.temporaryToken+'">http//localhost:8181/activate/</a>'
             };
 
             client.sendMail(email, function(err, info){
@@ -367,7 +367,7 @@ app.post('/signup',function(request,response){
                   console.log(err);
                 }
                 else {
-                  console.log('Message sent: ' + info.response);
+                  console.log('Message sent: ' + info);
                 }
             });
 
@@ -379,13 +379,12 @@ app.post('/signup',function(request,response){
   }
 });
 
-app.get('/activate/:token',function(request,response){
+app.get('/activate_account/:token',function(request,response){
   console.log("reachedhere");
   var user = mongoose.model('users');
   user.findOne({temporaryToken:request.params.token},function(error,user){
     if(error) throw error;
     var token=request.params.token;
-
 
     var options = {
       auth: {
@@ -398,8 +397,8 @@ app.get('/activate/:token',function(request,response){
 
     jwt.verify(token, secret, function (err,decoded) {
       if (err) {
-        response.sendFile(path.join(__dirname + '/../client/views/activate.html'));
-        // response.json({success : false, message : "Activation link has expired"});
+        // response.sendFile(path.join(__dirname + '/../client/views/activate.html'));
+        response.json({success : false, message : "Activation link has expired"});
       }else if(!user){
         response.json({success : false, message : "Activation link has expired"});
       } else {
@@ -413,7 +412,7 @@ app.get('/activate/:token',function(request,response){
             var email = {
               from: 'Cookitup.com, cookitup@localhost.com',
               to: user.userid,
-              subject: 'Cookitup: Acount activated.',
+              subject: 'Cookitup: Account activated.',
               text: 'Hello '+user.name+', Your account has been activated.',
               html: 'Hello<strong> '+user.name+'</strong>,<br/><br/>Your account has been activated.'
             };
@@ -423,11 +422,11 @@ app.get('/activate/:token',function(request,response){
                   console.log(err);
                 }
                 else {
-                  console.log('Message sent: ' + info.response);
+                  console.log('Message sent: ' + info);
                 }
             });
-            //response.send({success : true, message : "Account activated!"});
-            response.sendFile(path.join(__dirname + '/../client/views/activate.html'));
+            response.send({success : true, message : "Account activated!"});
+            // response.sendFile(path.join(__dirname + '/../client/views/activate.html'));
           }
         });
       };

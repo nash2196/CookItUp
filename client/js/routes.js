@@ -35,6 +35,7 @@ app.config(($stateProvider,$urlRouterProvider)=>{
     controller : function($scope,$http,$timeout,$state,getRecipe,getImages) {
       this.recipe = getRecipe.data;
       this.recipe.images = getImages.data.images;
+      
       this.commentSuccess=false;
       this.commentError=false;
       $scope.count=this.recipe.liked_by.length;
@@ -70,38 +71,38 @@ app.config(($stateProvider,$urlRouterProvider)=>{
           $timeout(()=>{
             $state.reload();
           });
-          });
-        };
-        // $scope.like = {};
-        // $scope.like.votes = 0;
-        //
-        // console.log(userid+"  "+recipeid);
-        //   console.log("reached in like!");
-        //   this.recipe.likes++;
-        //   $timeout(()=>{
-        //     $state.reload();
-        //   },2000);
-          // if ($scope.like.userVotes == 1) {
-          //   delete $scope.like.userVotes;
-          //   $scope.like.votes--;
-          // } else {
-          //   $scope.like.userVotes = 1;
-          //   $scope.like.votes++;
-          // }
+        });
+      };
+      // $scope.like = {};
+      // $scope.like.votes = 0;
+      //
+      // console.log(userid+"  "+recipeid);
+      //   console.log("reached in like!");
+      //   this.recipe.likes++;
+      //   $timeout(()=>{
+      //     $state.reload();
+      //   },2000);
+      // if ($scope.like.userVotes == 1) {
+      //   delete $scope.like.userVotes;
+      //   $scope.like.votes--;
+      // } else {
+      //   $scope.like.userVotes = 1;
+      //   $scope.like.votes++;
+      // }
 
       this.recipe.addComment = (userid,comment) => {
-         $http.post('/recipe/comment',{recipeID : this.recipe.recipe_name,userID : userid,comment : comment})
-         .then((response)=>{
-           if(response.data.success){
-                this.commentSuccess = true;
-                this.userComment = null;
-                $timeout(()=>{
-                  $state.reload();
-                },2000);
-           }else{
-             this.commentError = true;
-           };
-         });
+        $http.post('/recipe/comment',{recipeID : this.recipe.recipe_name,userID : userid,comment : comment})
+        .then((response)=>{
+          if(response.data.success){
+            this.commentSuccess = true;
+            this.userComment = null;
+            $timeout(()=>{
+              $state.reload();
+            },2000);
+          }else{
+            this.commentError = true;
+          };
+        });
       };
     },
     controllerAs : 'recipeViewCtrl'
@@ -114,12 +115,12 @@ app.config(($stateProvider,$urlRouterProvider)=>{
     controller : function () {
       this.tab = 1;
       this.isSet = function(checkTab) {
-          return this.tab === checkTab;
-        };
+        return this.tab === checkTab;
+      };
 
       this.setTab = function(activeTab) {
-          this.tab = activeTab;
-        };
+        this.tab = activeTab;
+      };
     },
     controllerAs : 'tab',
     authenticated :true
@@ -149,33 +150,48 @@ app.config(($stateProvider,$urlRouterProvider)=>{
     authenticated : true
   })
 
-  // .state('activate', {
-  //   url : '/activate/:token',
-  //   templateUrl : '/views/activate.html',
-  //   //authenticated : false,
-  //   controller : function () {
-  //       console.log("Reached in emailCtrl!");
-  //   },
-  //   controllerAs : 'emailCtrl',
-  //
-  // })
+  .state('activate', {
+    url : '/activate/:token',
+    templateUrl : '/views/activate.html',
+    //authenticated : false,
+    controller : function ($http,$stateParams,$state,$timeout) {
+      this.successMsg=null;
+      this.errorMsg=null;
+      $http.get('/activate_account/'+$stateParams.token)
+      .then((response)=>{
+        if (response.data.success) {
+            this.successMsg=response.data.message;
+            $timeout(()=>{
+              $state.go('login');
+            },2000);
 
+        }else {
+          this.errorMsg=response.data.message;
+          $timeout(()=>{
+            $state.go('signup')
+          },2000);
+        };
+      });
+    },
+    controllerAs : 'activeCtrl',
+
+  })
 });
 
 
 app.run(['$transitions','$state', 'authService', function ($transitions,$state,authService) {
-    $transitions.onStart({to : '**'},function (trans) {
+  $transitions.onStart({to : '**'},function (trans) {
 
-      if(trans.to().authenticated == true){
-        if(!authService.isLoggedIn()){
-          return false;
-        };
-
-      }else if(trans.to().authenticated == false){
-        if(authService.isLoggedIn()){
-          return false;
-        }
+    if(trans.to().authenticated == true){
+      if(!authService.isLoggedIn()){
+        return false;
       };
 
-    });
+    }else if(trans.to().authenticated == false){
+      if(authService.isLoggedIn()){
+        return false;
+      }
+    };
+
+  });
 }]);
