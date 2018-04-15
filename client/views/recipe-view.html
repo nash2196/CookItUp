@@ -103,9 +103,8 @@ ng-src="data:{{video.filetype}};base64,{{video.data}}" /> -->
 
 
 
-<!-- <div ng-show="(recipeViewCtrl.checkVideo(recipeViewCtrl.recipe.recipe_name))==true"> -->
-<div ng-show="img/recipes/{{recipeViewCtrl.recipe.recipe_name}}.mp4">
-<!-- <div ng-show="recipeViewCtrl.recipe.recipe_name=='Apple Juice'"> -->
+
+<div ng-show="recipeViewCtrl.recipe.videos[1]">
 <br/>  <h3><b>Video Tutorial:</b></h3>
 <center><video width="500" height="400" controls controlsList="nodownload">
 <source ng-src="img/recipes/{{recipeViewCtrl.recipe.recipe_name}}.mp4"
