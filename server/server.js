@@ -52,6 +52,7 @@ app.get('/meals', function(request,response){
 
 app.get('/recipes', function(request,response){
     recipes.find(function(err,recipes){
+
       var gfs=grid(mongoose.connection.db);
       for(var i=0;i<recipes.length;i++){
         (function(i){
@@ -76,11 +77,11 @@ app.get('/recipes', function(request,response){
                 });
 
                 imgFlag=1;
-                //continue;
               }
 
 
               if(files[j].contentType=="video/mp4" && vidFlag==0){
+
                 var written=false;
                 var fs_write_stream=fs.createWriteStream(path.join(__dirname,'/../client/img/recipes/',recipes[i].recipe_name+'.mp4'));
 
@@ -97,7 +98,6 @@ app.get('/recipes', function(request,response){
                 });
 
                 vidFlag=1;
-                //continue;
               }
             })(i,j);
             }
@@ -110,125 +110,6 @@ app.get('/recipes', function(request,response){
     });
 });
 
-// app.get('/recipes', function(request,response){
-//     recipes.find().exec(function(err,recipes){
-//       for(var i=0;i<recipes.length;i++){
-//         (function(i){
-//           var gfs=grid(mongoose.connection.db);
-//           var thumbnail='';
-//           gfs.files.findOne({"metadata.recipeid":recipes[i].recipe_id},function(err,file){
-//             var written=false;  //safegaurd against readstream.on('data') being called twice,as readstream reads files in chunks
-//             var readstream = gfs.createReadStream({
-//               filename:file.filename
-//             });
-//
-//             readstream.on('data',function (data) {
-//               if (!written) {
-//                 written=true;
-//                 thumbnail = data.toString('base64');
-//               }
-//             });
-//
-//             readstream.on('end',function () {
-//
-//               recipes[i].thumbnail=thumbnail;
-//               // var userinfo = {
-//               //   username : user.name,
-//               //   description : user.description,
-//               //   pro_pic : pro_pic
-//               // };
-//               //response.json({success:true, info:userinfo});
-//             });
-//
-//             readstream.on('error',function () {
-//               console.log('error in readstream(84)');
-//             //  response.json({success:false});
-//             });
-//
-//           });
-//         })(i);
-//       }
-//   //    console.log(recipes);
-//       response.send(recipes);
-//     });
-// });
-
-
-//get recipes with images
-// app.get('/recipes', function(request,response){
-//     recipes.find({}).populate('gridfs_id').exec(function(err,recipes){
-//     //  console.log(recipes);
-//       var gfs=grid(mongoose.connection.db);
-//       if (err) {
-//         console.log("error in finding recipe");
-//         throw err;
-//       }
-//       //var photo_id;
-//     for(var i=0;i<recipes.length;i++){
-//       (function(i){
-//       var thumbnail=[],fTypes=[];
-//       // console.log("Get Image ");
-//       //recipes.findOne({recipe_name:request.params.recipeID},'photos',function (err,recipe) {
-//         //console.log(photo_id);
-//
-//         if (recipes[i].photos[0]) {
-//           //gfs.files.find({"metadata.recipeid":photo_id}).toArray(function (err, files) {
-//             //if (err) {
-//             //  throw err;
-//             //};
-//
-//             // if(files.length===0){
-//             //   return response.json({success : false,message: 'File not found'});
-//             // };
-//
-//             console.log(i+" : "+recipes[i].recipe_name);
-//  //            gfs.exist({_id: recipes[i].gridfs_id}, function (err, found) {
-//  // if (err) return handleError(err);
-//  // found ? console.log('File exists') : console.log('File does not exist');
-//  //res.send(found)
-// //});
-//             //console.log("File info :",files);
-//             //for (var i = 0; i < files.length; i++) {
-//               //res.writeHead(200, {'Content-Type': files[0].contentType});
-//               fTypes.push(recipes[i].gridfs_id.contentType);
-//               console.log("ftypes "+i+" "+ftypes );
-//               var readstream = gfs.createReadStream({
-//                 filename : recipes[i].gridfs_id.filename
-//               });
-//               console.log("filename: "+recipes[i].gridfs_id.filename);
-//
-//               readstream.on('data', function(data) {
-//                 thumbnail.push(
-//                   {
-//                     'data':data.toString('base64'),
-//                     'filetype':fTypes.shift()
-//                   }
-//                 );
-//               });
-//
-//               readstream.on('end', function() {
-//                 // if (recipes[i].thumbnail.length===1) {
-//                 //   // console.log("images ",images);
-//                 //   // console.log("images:",fTypes);
-//                 //   //response.send({images:images});
-//                 //   console.log("finished!");
-//                   return;
-//               });
-//
-//               readstream.on('error', function (err) {
-//                 console.log('An error occurred!');
-//                 throw err;
-//               });
-//             //};//end for
-//           }
-//         else {
-//           console.log("no photo_id");
-//           response.send({success:false});
-//         }
-//       })(i);
-//     }
-//     });
-// });
 
 
 app.get('/recipe/:recipeID', function(request,response) {
@@ -238,8 +119,25 @@ app.get('/recipe/:recipeID', function(request,response) {
       if(err){
         response.status(404).send("Not found");
       }
-      response.send(recipe);
-    });
+      var gfs=grid(mongoose.connection.db);
+      gfs.files.find({"metadata.recipeid":recipe.recipe_id}).toArray(function (err, files){
+        var vidFlag=0;
+        for(var j=0;j<files.length;j++){
+          //(function(j){
+
+            if(files[j].contentType=="video/mp4"){
+              recipe.videos.push("true");
+              vidFlag=1;
+            }
+
+            if((j+1)==files.length){
+              response.send(recipe);
+            }
+          } //)(j);
+        });
+        //console.log(recipe.videos);
+        //response.send(recipe);
+      });
 });
 
 // app.post('/checkVideo',function(request,response){
@@ -338,17 +236,26 @@ app.get('/images/:recipeID',function(request,response){
 
     if (photo_id) {
       gfs.files.find({"metadata.recipeid":photo_id}).toArray(function (err, files) {
+        var count=0;
+        for(var j=0;j<files.length;j++){
+          if(files[j].contentType=="image/jpeg" || files[j].contentType=="binary/octet-stream"){
+            count++;
+          }
+        }
+
         if (err) {
           throw err;
         };
 
-        if(files.length===0){
+        if(files.length==0){
           return response.json({success : false,message: 'File not found'});
         };
   //      console.log("File info :",files);
         for (var i = 0; i < files.length; i++) {
+          if(files[i].contentType=="image/jpeg" || files[i].contentType=="binary/octet-stream"){
           //res.writeHead(200, {'Content-Type': files[0].contentType});
           fTypes.push(files[i].contentType);
+          console.log("contentType: "+files[i].contentType);
           var readstream = gfs.createReadStream({
             filename : files[i].filename
           });
@@ -363,7 +270,7 @@ app.get('/images/:recipeID',function(request,response){
           });
 
           readstream.on('end', function() {
-            if (images.length===files.length) {
+            if (images.length==count) {
               // console.log("images ",images);
               // console.log("images:",fTypes);
               response.send({images:images});
@@ -375,7 +282,8 @@ app.get('/images/:recipeID',function(request,response){
             console.log('An error occurred!');
             throw err;
           });
-        };//end for
+        }
+        }//end for
 
       });
     }else {
