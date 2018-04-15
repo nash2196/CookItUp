@@ -43,73 +43,89 @@ app.get('/meals', function(request,response){
   });
 });
 
-// app.get('/recipes', function(request,response){
-//     recipes.find(function(err,recipes){
-//       //console.log(recipes);
-//       response.send(recipes);
-//     });
-// });
-
 app.get('/recipes', function(request,response){
     recipes.find(function(err,recipes){
-
-      var gfs=grid(mongoose.connection.db);
-      for(var i=0;i<recipes.length;i++){
-        (function(i){
-      //    console.log("i: "+i);
-          var imgFlag=0;
-          var vidFlag=0;
-          gfs.files.find({"metadata.recipeid":recipes[i].recipe_id}).toArray(function (err, files){
-            for(var j=0;j<files.length;j++){
-            (function(i,j){
-        //      console.log("recipe: "+recipes[i].recipe_name+" i: "+i+"  j: "+j+" imgFlag: "+imgFlag+" vidFlag: "+vidFlag);
-
-              if((files[j].contentType=="image/jpeg" || files[j].contentType=="binary/octet-stream") && imgFlag==0){
-                var fs_write_stream=fs.createWriteStream(path.join(__dirname,'/../client/img/recipes/',recipes[i].recipe_name+'.jpg'));
-
-                var readstream=gfs.createReadStream({
-                  filename: files[j].filename
-                });
-
-                readstream.pipe(fs_write_stream);
-                fs_write_stream.on('close',function(){
-            //      console.log(recipes[i].recipe_name+" image written!");
-                });
-
-                imgFlag=1;
-              }
-
-
-              if(files[j].contentType=="video/mp4" && vidFlag==0){
-
-                var written=false;
-                var fs_write_stream=fs.createWriteStream(path.join(__dirname,'/../client/img/recipes/',recipes[i].recipe_name+'.mp4'));
-
-                var readstream=gfs.createReadStream({
-                  filename: files[j].filename
-                });
-
-                readstream.pipe(fs_write_stream);
-                fs_write_stream.on('close',function(){
-                  if (!written) {
-                    written=true;
-                  console.log(recipes[i].recipe_name+" video written!");
-                }
-                });
-
-                vidFlag=1;
-              }
-            })(i,j);
-            }
-
-          });
-        })(i);
-      }
       //console.log(recipes);
       response.send(recipes);
     });
 });
 
+
+//get recipes with images
+// app.get('/recipes', function(request,response){
+//     recipes.find({}).populate('gridfs_id').exec(function(err,recipes){
+//     //  console.log(recipes);
+//       var gfs=grid(mongoose.connection.db);
+//       if (err) {
+//         console.log("error in finding recipe");
+//         throw err;
+//       }
+//       //var photo_id;
+//     for(var i=0;i<recipes.length;i++){
+//       (function(i){
+//       var thumbnail=[],fTypes=[];
+//       // console.log("Get Image ");
+//       //recipes.findOne({recipe_name:request.params.recipeID},'photos',function (err,recipe) {
+//         //console.log(photo_id);
+//
+//         if (recipes[i].photos[0]) {
+//           //gfs.files.find({"metadata.recipeid":photo_id}).toArray(function (err, files) {
+//             //if (err) {
+//             //  throw err;
+//             //};
+//
+//             // if(files.length===0){
+//             //   return response.json({success : false,message: 'File not found'});
+//             // };
+//
+//             console.log(i+" : "+recipes[i].recipe_name);
+//  //            gfs.exist({_id: recipes[i].gridfs_id}, function (err, found) {
+//  // if (err) return handleError(err);
+//  // found ? console.log('File exists') : console.log('File does not exist');
+//  //res.send(found)
+// //});
+//             //console.log("File info :",files);
+//             //for (var i = 0; i < files.length; i++) {
+//               //res.writeHead(200, {'Content-Type': files[0].contentType});
+//               fTypes.push(recipes[i].gridfs_id.contentType);
+//               console.log("ftypes "+i+" "+ftypes );
+//               var readstream = gfs.createReadStream({
+//                 filename : recipes[i].gridfs_id.filename
+//               });
+//               console.log("filename: "+recipes[i].gridfs_id.filename);
+//
+//               readstream.on('data', function(data) {
+//                 thumbnail.push(
+//                   {
+//                     'data':data.toString('base64'),
+//                     'filetype':fTypes.shift()
+//                   }
+//                 );
+//               });
+//
+//               readstream.on('end', function() {
+//                 // if (recipes[i].thumbnail.length===1) {
+//                 //   // console.log("images ",images);
+//                 //   // console.log("images:",fTypes);
+//                 //   //response.send({images:images});
+//                 //   console.log("finished!");
+//                   return;
+//               });
+//
+//               readstream.on('error', function (err) {
+//                 console.log('An error occurred!');
+//                 throw err;
+//               });
+//             //};//end for
+//           }
+//         else {
+//           console.log("no photo_id");
+//           response.send({success:false});
+//         }
+//       })(i);
+//     }
+//     });
+// });
 
 
 app.get('/recipe/:recipeID', function(request,response) {
@@ -119,39 +135,9 @@ app.get('/recipe/:recipeID', function(request,response) {
       if(err){
         response.status(404).send("Not found");
       }
-      var gfs=grid(mongoose.connection.db);
-      gfs.files.find({"metadata.recipeid":recipe.recipe_id}).toArray(function (err, files){
-        var vidFlag=0;
-        for(var j=0;j<files.length;j++){
-          //(function(j){
-
-            if(files[j].contentType=="video/mp4"){
-              recipe.videos.push("true");
-              vidFlag=1;
-            }
-
-            if((j+1)==files.length){
-              response.send(recipe);
-            }
-          } //)(j);
-        });
-        //console.log(recipe.videos);
-        //response.send(recipe);
-      });
+      response.send(recipe);
+    });
 });
-
-// app.post('/checkVideo',function(request,response){
-//   console.log("reached in checkVideo!");
-//   videoPath=path.join(__dirname,'/../client/img/recipes/',request.body.recipe_name+'.mp4');
-//   //console.log(videoPath);
-//   if(fs.existsSync('/../client/img/recipes/',request.body.recipe_name+'.mp4')){
-//     console.log("Video found!");
-//     response.json({success:true});
-//   }else{
-//     console.log("Video not found!");
-//     response.json({success:false});
-//   }
-// });
 
 app.post('/recipe/comment',function (request,response) {
     var recipeID = request.body.recipeID;
@@ -218,6 +204,14 @@ app.get('/favRecipes/:userid',function(request,response){
       });
 });
 
+  // var favouriteRecipes=[];
+  // for(var i=0;i<request.body;i++){
+  //   recipes.findOne({"recipe_id":request.body[i]},function(err,recipe){
+  //     favouriteRecipes.push(recipe);
+  //   });
+  // }
+//   response.json(favouriteRecipes);
+// });
 
 app.get('/images/:recipeID',function(request,response){
 
@@ -236,26 +230,17 @@ app.get('/images/:recipeID',function(request,response){
 
     if (photo_id) {
       gfs.files.find({"metadata.recipeid":photo_id}).toArray(function (err, files) {
-        var count=0;
-        for(var j=0;j<files.length;j++){
-          if(files[j].contentType=="image/jpeg" || files[j].contentType=="binary/octet-stream"){
-            count++;
-          }
-        }
-
         if (err) {
           throw err;
         };
 
-        if(files.length==0){
+        if(files.length===0){
           return response.json({success : false,message: 'File not found'});
         };
   //      console.log("File info :",files);
         for (var i = 0; i < files.length; i++) {
-          if(files[i].contentType=="image/jpeg" || files[i].contentType=="binary/octet-stream"){
           //res.writeHead(200, {'Content-Type': files[0].contentType});
           fTypes.push(files[i].contentType);
-          console.log("contentType: "+files[i].contentType);
           var readstream = gfs.createReadStream({
             filename : files[i].filename
           });
@@ -270,7 +255,7 @@ app.get('/images/:recipeID',function(request,response){
           });
 
           readstream.on('end', function() {
-            if (images.length==count) {
+            if (images.length===files.length) {
               // console.log("images ",images);
               // console.log("images:",fTypes);
               response.send({images:images});
@@ -282,8 +267,17 @@ app.get('/images/:recipeID',function(request,response){
             console.log('An error occurred!');
             throw err;
           });
-        }
-        }//end for
+        };//end for
+
+        // if (error===false) {
+        //   console.log("sending image");
+        //   response.send({success:true, images : images});
+        // }else if(error===true){
+        //   console.log("could not send image");
+        //   response.send({success:false});
+        // }else {
+        //   console.log("undefined error");
+        // };
 
       });
     }else {
@@ -322,157 +316,6 @@ app.post('/login',function(request,response){
     });
 
 });
-
-
-app.post('/resend',function(request,response){
-  var user = mongoose.model('users');
-  var options = {
-      auth: {
-        api_user: 'cookitup-project',
-        api_key: 'cookitup123'
-      }
-    };
-    var client = nodemailer.createTransport(sgTransport(options));
-  console.log("POST recieved");
-  console.log(request.body);
-
-  user.findOne({userid : request.body.email}).select('name userid password active').exec(function(err,user) {
-    if(err) throw err;
-
-    if(!user){
-      response.json({success : false, message : 'No user found',found:false});
-    }else if(user){
-      var validPswd = user.comparePassword(request.body.pswd);
-      if(!validPswd){
-        response.json({success : false, message : 'Invalid password',found:true});
-      }else if (user.active) {
-          response.json({success:false, message:'Your account is already active!',active:true,found:true});
-      }else{
-        user.temporaryToken = jwt.sign({ username : user.name, email : user.userid},secret,{expiresIn : '24h'});
-        user.save(function (err,user) {
-                  if (err) {
-                    console.log(err);
-                    response.json({success : false, message : "could not replace the old token",found:true});
-                  }
-                  if(user){
-                    var email = {
-                      from: 'Cookitup.com, cookitup@localhost.com',
-                      to: user.userid,
-                      subject: 'Cookitup: Activation link request',
-                      text: 'Hello '+user.name+', You recently requested for a new activation link. Please click on the following link to activate your Cookitup account: http://localhost:8181/#!/activate/'+user.temporaryToken,
-                      html: 'Hello<strong> '+user.name+'</strong>,<br/><br/>You recently requested for a new activation link.<br/>Please click on the link below to activate your Cookitup account:<br/></br><a href="http://localhost:8181/#!/activate/'+user.temporaryToken+'">http//localhost:8181/activate/</a>'
-                    };
-
-                    client.sendMail(email, function(err, info){
-                        if (err ){
-                          console.log(err);
-                        }
-                        else {
-                          console.log('Message sent: ' + info.response);
-                        }
-                    });
-                  }
-                  response.json({success : true, message : "Activation link sent! Please check your email for activation link.",found:true});
-              });
-            }
-          }
-  });
-});
-
-
-app.get('/resetPassword/:token',function(request,response){
-//  console.log("resetPassword  "+request.body.password);
-  var user = mongoose.model('users');
-  user.findOne({resetToken:request.params.token},function(error,user){
-    if(error) throw error;
-    //console.log(user);
-    var token=request.params.token;
-
-    jwt.verify(token, secret, function (err,decoded) {
-      if (err) {
-        response.json({success : false, message : "Err: Reset password link has expired!",expired:true});
-      }else{
-        response.json({success : true, userid:user.userid});
-      }
-    });
-  });
-});
-
-
-app.post('/resetPassword',function(request,response){
-    var user = mongoose.model('users');
-    user.findOne({userid:request.body.userid}).exec(function(err,user){
-      if(err) throw err;
-      if(request.body.password==null || request.body.password==''){
-        response.json({success:false, message:"Password is not provided"});
-      }else{
-        user.password=request.body.password;
-        user.resetToken=false;
-        user.save(function(err){
-          if (err) throw err;
-          else{
-            response.json({success:true,message:"Your password has been changed!"});
-          }
-        });
-      }
-
-    });
-});
-
-app.post('/resetPasswordLink',function(request,response){
-  var user = mongoose.model('users');
-  var options = {
-      auth: {
-        api_user: 'cookitup-project',
-        api_key: 'cookitup123'
-      }
-    };
-    var client = nodemailer.createTransport(sgTransport(options));
-    console.log("POST recieved");
-    console.log(request.body.uname);
-
-  user.findOne({userid : request.body.uname}).select('name userid password active').exec(function(err,user) {
-    if(err) throw err;
-
-    if(!user){
-      response.json({success : false, message : 'No user found',found:false});
-    }else if(user){
-      //var validPswd = user.comparePassword(request.body.pswd);
-      if(!user.active){
-        response.json({success : false, message : 'Your account is not activated yet!',found:true});
-      }else{
-        user.resetToken = jwt.sign({ username : user.name, email : user.userid},secret,{expiresIn : '24h'});
-        user.save(function (err,user) {
-                  if (err) {
-                    console.log(err);
-                    response.json({success : false, message : "Unable to send reset link.",found:true});
-                  }
-                  if(user){
-                    var email = {
-                      from: 'Cookitup.com, cookitup@localhost.com',
-                      to: user.userid,
-                      subject: 'Cookitup: Reset password link',
-                      text: 'Hello '+user.name+', You recently requested for a reset password link. Please click on the following link to reset your password: http://localhost:8181/#!/resetPassword/'+user.resetToken,
-                      html: 'Hello<strong> '+user.name+'</strong>,<br/><br/>You recently requested for a reset password link.<br/>Please click on the link below to reset your password:<br/></br><a href="http://localhost:8181/#!/resetPassword/'+user.resetToken+'">http//localhost:8181/resetPassword/</a>'
-                    };
-
-                    client.sendMail(email, function(err, info){
-                        if (err ){
-                          console.log(err);
-                        }
-                        else {
-                          console.log('Message sent: ' + info.response);
-                        }
-                    });
-                  }
-                  response.json({success : true, message : "Reset password link sent! Please check your email to change your password.",found:true});
-              });
-            }
-          }
-  });
-});
-
-
 
 app.post('/signup',function(request,response){
   //console.log("reachedhere!");
@@ -524,7 +367,7 @@ app.post('/signup',function(request,response){
                   console.log(err);
                 }
                 else {
-                  console.log('Message sent: ' + info.response);
+                  console.log('Message sent: ' + info);
                 }
             });
 
@@ -536,14 +379,12 @@ app.post('/signup',function(request,response){
   }
 });
 
-app.get('/activate_acc/:token',function(request,response){
+app.get('/activate_account/:token',function(request,response){
   console.log("reachedhere");
   var user = mongoose.model('users');
-  console.log(request.params.token);
   user.findOne({temporaryToken:request.params.token},function(error,user){
     if(error) throw error;
     var token=request.params.token;
-
 
     var options = {
       auth: {
@@ -557,9 +398,9 @@ app.get('/activate_acc/:token',function(request,response){
     jwt.verify(token, secret, function (err,decoded) {
       if (err) {
         // response.sendFile(path.join(__dirname + '/../client/views/activate.html'));
-        response.json({success : false, message : "Activation link has expired!",expired:true});
+        response.json({success : false, message : "Activation link has expired"});
       }else if(!user){
-        response.json({success : false, message : "Activation link has expired!",expired:true});
+        response.json({success : false, message : "Activation link has expired"});
       } else {
         user.temporaryToken=false;
         user.active=true;
@@ -572,7 +413,7 @@ app.get('/activate_acc/:token',function(request,response){
               from: 'Cookitup.com, cookitup@localhost.com',
               to: user.userid,
               subject: 'Cookitup: Account activated.',
-              text: 'Hello '+user.name+', Your account has been activated!',
+              text: 'Hello '+user.name+', Your account has been activated.',
               html: 'Hello<strong> '+user.name+'</strong>,<br/><br/>Your account has been activated.'
             };
 
@@ -581,10 +422,10 @@ app.get('/activate_acc/:token',function(request,response){
                   console.log(err);
                 }
                 else {
-                  console.log('Message sent: ' + info.response);
+                  console.log('Message sent: ' + info);
                 }
             });
-            response.send({success : true, message : "Your account has been activated!"});
+            response.send({success : true, message : "Account activated!"});
             // response.sendFile(path.join(__dirname + '/../client/views/activate.html'));
           }
         });
@@ -614,6 +455,18 @@ app.post('/user',function (request,response) {
   response.send(request.decoded);
 });
 
+// app.post('/removeProPic',function(request,response){
+//   console.log(request.body);
+//   var users=mongoose.model('users');
+//   users.findOneAndUpdate({"userid":request.body},{$set:{"profile_picture":"default"}}).exec(function(err,changed){
+//     if(err){
+//       throw error;
+//     }
+//     if(changed){
+//         response.json({message:"Current profile picture removed"});
+//     }
+//   });
+// });
 
 app.post('/recipe/doLike',function(request,response){
   var userid=request.body.userID;
@@ -739,7 +592,10 @@ app.post('/addFav',function (request,response){
 
   });
 });
-
+// app.get('/uploadedRecipes/:userid',function(request,response){
+//   var userID=request.params.userid,
+//   recipes.findOne({uploader:userID})
+// });
 
 app.get('/details/:userid',function (request,response) {
   var users = mongoose.model('users');
@@ -765,7 +621,6 @@ app.get('/details/:userid',function (request,response) {
         }
         });
         readstream.on('end',function () {
-        //  console.log("pro pic: "+pro_pic);
           var userinfo = {
             username : user.name,
             description : user.description,
@@ -860,6 +715,15 @@ app.post('/upload/data',function(request,response){
       }
     });
   }
+  // console.log(formData);
+  // formData.save()
+  // .then(console.log("recipe saved!"));
+  //.catch(console.log("failed to save recipe!"));
+  //console.log("Name: ",formData.recipeName);
+  //console.log("ingredients: ",formData.ingredients);
+  //console.log("meal_type: ",formData.meal_type," cuisine_type: ",formData.cuisine_type);
+  // response.send(formData.uuid);
+
 });
 
 app.post('/upload/profilePic',multipartMiddleware,function (request,response) {

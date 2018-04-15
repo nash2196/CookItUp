@@ -1,4 +1,4 @@
-<!-- <body ng-app="validationApp" ng-controller="mainController"> -->
+<!-- <div ng-app="validationApp" ng-controller="mainController"> -->
 
 <div class="header-bar">
   <a ui-sref="home" style="color:white; text-decoration:none"><img src="img/logo.png"/></a>
@@ -33,15 +33,12 @@
         <span ng-show="loginForm.pass_word.$invalid && !loginForm.pass_word.$pristine" class="help-block">Password must be between 6-15 characters!</span>
                 </div>
         <button type="submit" class="body-btn">Login</button></br></br>
-        <div class="psw">Forgot <a ui_sref="resetlink">password?</a></div>
+        <div class="psw">Forgot <a href="/resetPassword">password?</a></div>
       </form>
+    </center>
 
     <label class="success" ng-show="mainCtrl.successMsg">{{mainCtrl.successMsg}}</label>
-    <label class="error" ng-show="mainCtrl.errorMsg" ng-hide="mainCtrl.sucessMsg">{{mainCtrl.errorMsg}}</label>
-    <div ng-show="mainCtrl.expired"><br/>
-      <button type="button" class="btn btn-success" ui-sref="resendlink">Resend Authentication Link</button>
-    </div>
-    </center>
+    <label class="error" ng-show="mainCtrl.errorMsg">{{mainCtrl.errorMsg}}</label>
 </div>
-<!-- </body> -->
+<!-- </div> -->
 <!--</html> -->

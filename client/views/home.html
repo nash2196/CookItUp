@@ -104,9 +104,8 @@
           <a class="recipe" ui-sref="recipe-view({recipeID : recipe.recipe_name })">
           <img style="height : 200px; width:200px;"
           ng-src="img/recipes/{{recipe.recipe_name}}.jpg"
-          onerror="this.onerror=null;this.src='img/no_img.png';" /></a>
-        </label>
-        <a class="recipe" ui-sref="recipe-view({recipeID : recipe.recipe_name })">       
+          onerror="this.onerror=null;this.src='img/no_img.png';" />
+        </label>          <!-- ng-repeat="image in recipeViewCtrl.recipe.images" -->
           <label><p>Name: {{recipe.recipe_name|capitalize}}</p>
           <p>Uploaded by: {{recipe.uploader|capitalize}}</p>
           <p>Likes:{{recipe.liked_by.length}}</p>

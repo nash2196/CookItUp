@@ -57,8 +57,7 @@ var userSchema = new schema({
   "profile_picture":String,
   "description":String,
   "active": {type:Boolean, required:true, default:false} ,
-  "temporaryToken":{type:String, required:false},
-  "resetToken":String
+  "temporaryToken":{type:String, required:false}
 
 },{collection:'users'});
 userSchema.methods.comparePassword = function(password) {

@@ -1,5 +1,5 @@
-<head>
-  <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+<!-- <head>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" /> -->
 
 <style>
@@ -12,9 +12,9 @@
 }
 
 body{
-  background: linear-gradient(to bottom,  #fff 0%, #eee 100%);
+  /* background: linear-gradient(to bottom,  #fff 0%, #eee 100%); */
   font-size: 4em;
-  height: 100vh;
+  /* height: 100vh; */
   .content{
     margin: 30% auto;
     text-align: center;
@@ -37,7 +37,7 @@ body{
 }
 
 </style>
-</head>
+<!-- </head> -->
 
 <div class="header-bar">
   <a ui-sref="home" style="color:white; text-decoration:none"><img src="img/logo.png"/></a>
@@ -71,6 +71,13 @@ ng-src="data:{{video.filetype}};base64,{{video.data}}" /> -->
   Your browser does not support the video tag.
 </video> -->
 <div style="font-size:14px">Posted on:{{recipeViewCtrl.recipe.date}}</div>
+<div class="form">
+<div><img ng-src="/img/chef_icon.png">&nbsp;<label>Chef: </label><i><span>{{recipeViewCtrl.recipe.uploader}}</i></span></div>
+<div><img ng-src="/img/serve_icon.png">&nbsp;<label><b>Recipe Servings:</label><span> {{recipeViewCtrl.recipe.serves}}</div></span>
+<div><img ng-src="/img/time_icon.png">&nbsp;<label>Cooking Time:</label><span style="font-weight:normal;"> 02:00 hours</div></span>
+<!-- <div><img ng-src="/img/like.png" width="50px" height="50px">&nbsp;<label> {{recipeViewCtrl.recipe.liked_by.length}}</div> -->
+<div><label>Taste :</label><span>{{recipeViewCtrl.recipe.taste}}</div></span>
+</div>
 
 <div ng-show="!mainCtrl.userid">
   <div class="content">
@@ -82,36 +89,19 @@ ng-src="data:{{video.filetype}};base64,{{video.data}}" /> -->
 <div ng-show="mainCtrl.userid">
   <div class="content">
     <a ng-click="recipeViewCtrl.recipe.likeFunc(mainCtrl.userid,recipeViewCtrl.recipe.recipe_id)">
-      <i class="glyphicon" ng-class="(recipeViewCtrl.getLikeStatus(mainCtrl.userid))==1 ? 'glyphicon-heart' : 'glyphicon-heart-empty'"></i></a>
+      <i class="glyphicon" ng-class="(recipeViewCtrl.getLikeStatus(mainCtrl.userid))==1 ? 'glyphicon-heart' : 'glyphicon-heart-empty'"></i>
       <span ng-model="count">{{count}}</span>
+    </a>
   </div>
 </div>
-
-
-<div class="form">
-<div><img ng-src="/img/chef_icon.png">&nbsp;<label>Chef: </label><i><span>{{recipeViewCtrl.recipe.uploader}}</i></span></div>
-<div ng-show="recipeViewCtrl.recipe.serves"><img ng-src="/img/serve_icon.png">&nbsp;<label><b>Recipe Servings:</label><span> {{recipeViewCtrl.recipe.serves}}</div></span>
-<div ng-show="recipeViewCtrl.recipe.time"><img ng-src="/img/time_icon.png">&nbsp;<label>Cooking Time:</label><span style="font-weight:normal;">{{recipeViewCtrl.recipe.time}}</div></span>
-<!-- <div><img ng-src="/img/like.png" width="50px" height="50px">&nbsp;<label> {{recipeViewCtrl.recipe.liked_by.length}}</div> -->
-<div ng-show="recipeViewCtrl.recipe.taste"><label>Taste :</label><span>{{recipeViewCtrl.recipe.taste}}</div></span>
-</div>
-
 
 <button class="body-btn" ng-hide="!mainCtrl.userid || recipeViewCtrl.recipe.uploader==mainCtrl.userid" ng-click="mainCtrl.addToFav(recipeViewCtrl.recipe.recipe_id,mainCtrl.userid)"> Add to favourites</button>
 <label class="success" ng-show="mainCtrl.successMsg">{{mainCtrl.successMsg}}</label>
 <label class="error" ng-show="mainCtrl.errorMsg">{{mainCtrl.errorMsg}}</label>
-
-
-
-
-<div ng-show="recipeViewCtrl.recipe.videos[1]">
-<br/>  <h3><b>Video Tutorial:</b></h3>
-<center><video width="500" height="400" controls controlsList="nodownload">
-<source ng-src="img/recipes/{{recipeViewCtrl.recipe.recipe_name}}.mp4"
-onerror="this.onerror=null;this.src='img/no_img.png';" type="video/mp4">
-   <!-- ng-src="img/recipes/{{recipeViewCtrl.recipe.recipe_name}}.mp4" -->
-<!-- onerror="this.onerror=null;this.src='img/no_img.png';" type="video/mp4"> -->
-  <!-- <source src="img/applejuice.mp4" type="video/mp4"> -->
+<div ng-show="recipeViewCtrl.recipe.recipe_name=='Apple Juice'">
+<center><video width="500" height="400" controls>
+  <source src="img/applejuice.mp4" type="video/mp4">
+  <!-- <source src="movie.ogg" type="video/ogg"> -->
 </video>
 </center>
 </div>
