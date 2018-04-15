@@ -1,8 +1,8 @@
 <h2>&nbsp;&nbsp;&nbsp;&nbsp;{{mainCtrl.username}}'s Favourites!</h2>
-<br/><br/>
+<br/>
 <section ng-controller = "favController as favCtrl">
 
-  <div ng-show="!favCtrl.favRecipes">No favourite recipes to display.</div>
+  <div ng-show="!favCtrl.favRecipes"><h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No favourite recipes to display.</h4></div>
   <div ng-show="favCtrl.favRecipes" class="recipe" ng-repeat = "recipe in favCtrl.favRecipes">
     <!-- <a class="recipe" ui-sref="recipe-view({recipeID : recipe.recipe_name })"> -->
     <div class="recipe">

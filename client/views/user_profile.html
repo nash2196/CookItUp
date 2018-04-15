@@ -26,7 +26,7 @@
     <li ng-class="{ active:tab.isSet(4) }" ng-click="tab.setTab(4)" ui-sref="user.add">Add a Recipe</li>
     <li ng-class="{ active:tab.isSet(5) }" ng-click="tab.setTab(5)" ui-sref="user.edit">Edit Profile</li>
   </ul>
-  </div>
+</div>
   <div class="content">
     <div ui-view></div>
   </div>
@@ -54,14 +54,14 @@
   flex: 0.2;
   background-color: black;
   /* width: 200px;
-  height: 100%; */
+  height: auto; */
 }
 
 .tabs {
   display: flex;
   flex: 1;
   flex-direction: row;
-  /* position:relative; */
+/* position:relative; */
   border-right: 1px solid #ccc;
   background-color:black;
   /* width:100%;
@@ -70,18 +70,17 @@
 }
 
 .tabs .nav {
-  /* display: flex; */
-  /* flex-wrap: wrap; */
-  /* align-items: stretch; */
-  display: flex;
   flex: 1;
   flex-direction: column;
+  /* display: flex;
+  flex-wrap: wrap;
+  align-items: stretch; */
   background-color: black;
   color: white;
   /* height:100%; */
-  /* width: 200px; */
   border-right:1px solid black;
   text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2);
+  /* width: 200px; */
 }
 
 
@@ -108,16 +107,13 @@
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
 }
 .tabs .content {
+  padding: 20px 0px;
+  background-color: #ddd;
   flex: 0.8;
   display: flex;
-  padding: 20px 0px;
   overflow: hidden;
-  background-color: #ddd;
-  /* position: absolute; */
-  /* top:0px; */
-  /* left:200px; */
   /* color:#6C5D5D; */
-  /* width: calc(100% - 200px); */
+  /* width: calc(100% - 160px); */
   opacity: 1;
   transition: opacity 0.1s linear 0s;
 }
