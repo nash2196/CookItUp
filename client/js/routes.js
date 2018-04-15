@@ -37,6 +37,22 @@ app.config(($stateProvider,$urlRouterProvider)=>{
       this.recipe.images = getImages.data.images;
       this.commentSuccess=false;
       this.commentError=false;
+
+      // this.video=false;
+      // this.checkVideo=(recipe_name)=>{
+      //   console.log("routes checkVideo!!");
+      //   $http.post('/checkVideo',{recipe_name:recipe_name})
+      //   .then((response)=>{
+      //     console.log(response.data.success);
+      //     if(response.data.success){
+      //       return true;
+      //     }else{
+      //       return false;
+      //     }
+      //   });
+      // };
+
+
       $scope.count=this.recipe.liked_by.length;
       var flag=0;
       //$scope.like=0;
@@ -72,22 +88,6 @@ app.config(($stateProvider,$urlRouterProvider)=>{
           });
           });
         };
-        // $scope.like = {};
-        // $scope.like.votes = 0;
-        //
-        // console.log(userid+"  "+recipeid);
-        //   console.log("reached in like!");
-        //   this.recipe.likes++;
-        //   $timeout(()=>{
-        //     $state.reload();
-        //   },2000);
-          // if ($scope.like.userVotes == 1) {
-          //   delete $scope.like.userVotes;
-          //   $scope.like.votes--;
-          // } else {
-          //   $scope.like.userVotes = 1;
-          //   $scope.like.votes++;
-          // }
 
       this.recipe.addComment = (userid,comment) => {
          $http.post('/recipe/comment',{recipeID : this.recipe.recipe_name,userID : userid,comment : comment})
@@ -149,15 +149,66 @@ app.config(($stateProvider,$urlRouterProvider)=>{
     authenticated : true
   })
 
-  // .state('activate', {
-  //   url : '/activate/:token',
-  //   templateUrl : '/views/activate.html',
-  //   //authenticated : false,
-  //   controller : function () {
-  //       console.log("Reached in emailCtrl!");
-  //   },
-  //   controllerAs : 'emailCtrl',
-  //
+  .state('resendlink',{
+    url:'/resendActivationLink',
+    templateUrl:'/views/resend_link.html',
+    authenticated:false
+  })
+
+  .state('resetlink',{
+    url:'/resetLink',
+    templateUrl:'/views/reset_link.html',
+    authenticated:false
+  })
+
+  .state('activate', {
+    url : '/activate/:token',
+    templateUrl : '/views/activate.html',
+    authenticated : false,
+    controller : function ($http,$stateParams,$timeout,$state) {
+
+      $http.get('/activate_acc/'+$stateParams.token)
+      .then((response)=>{
+        if(response.data.success){
+          this.successMsg=response.data.message;
+          console.log('activated',response.data.message);
+          $timeout(()=>{
+            $state.go('login');
+          },2000);
+        }else {
+          this.errorMsg=response.data.message;
+          console.log('error',response.data.message);
+          $timeout(()=>{
+            $state.go('resendLink');
+          },2000);
+        }
+      });
+        // console.log("Reached in emailCtrl!");
+    },
+    controllerAs : 'emailCtrl',
+  })
+
+  .state('resetPassword', {
+    url : '/resetPassword/:token',
+    templateUrl : '/views/reset_password.html',
+    authenticated : false,
+  })
+
+  .state('resendLink', {
+    url : '/resendLink',
+    templateUrl : '/views/resend_link.html',
+    authenticated :false
+    })
+
+    .state('resetPasswordLink',{
+      url:'/resetPasswordLink',
+      templateUrl:'/views/reset_link.html',
+      authenticated:false
+    })
+  // .state('/resend',function(){
+  //   url : '/activate/resend',
+  //   templateUrl : '/views/resendlink.html',
+  //   authenticated : false,
   // })
 
 });

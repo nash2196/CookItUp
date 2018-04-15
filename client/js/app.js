@@ -4,7 +4,7 @@ app.config(function ($httpProvider) {
   $httpProvider.interceptors.push('authInterceptors');
 });
 
-app.controller('MainController',function(authService,$timeout,$state,$transitions,$http,$scope){
+app.controller('MainController',function(authService,$timeout,$state,$transitions,$http,$scope,$stateParams){
 
 
   $transitions.onStart({},() => {
@@ -26,7 +26,7 @@ app.controller('MainController',function(authService,$timeout,$state,$transition
 
   this.doLogin =  (formData) => {
     this.errorMsg = false;
-
+    this.expired=false;
     var loginData = {
           email : formData.uname,
           pswd : formData.pswd
@@ -40,6 +40,10 @@ app.controller('MainController',function(authService,$timeout,$state,$transition
           this.successMsg = null;
         },2000);
       }else{
+        if(response.data.expired)
+        {
+          this.expired=true;
+        }
         this.errorMsg = response.data.message;
       }
     });
@@ -104,47 +108,104 @@ app.controller('MainController',function(authService,$timeout,$state,$transition
     .then((response)=>{
       if (response.data.success) {
         $state.reload();
-    }
-  });
-};
+      }
+    });
+  };
 
+  this.resendLink=(formData)=>{
+    this.resendErrorMsg = false;
+    this.resendSuccessMsg=false;
+    this.expired=false;
+
+    var formData = {
+          email : formData.uname,
+          pswd : formData.pswd
+    };
+    $http.post('/resend',formData)
+    .then((response)=>{
+      if(response.data.success){
+        this.resendSuccessMsg=response.data.message;
+        console.log('Link sent',response.data.message);
+        $timeout(()=>{
+          $state.go('login');
+        },2000);
+      }else {
+        if(response.data.active){
+          console.log("This account is already account!")
+          this.resendSuccessMsg=response.data.message;
+          $timeout(()=>{
+            $state.go('login');
+          },2000);
+        }
+        else{
+          this.resendErrorMsg=response.data.message;
+          console.log('error',response.data.message);
+        }
+      }
+    });
+  };
+
+
+  this.resetPasswordLink=(formData)=>{
+    this.resetErrorMsg = false;
+    this.resetSuccessMsg=false;
+    $http.post('/resetPasswordLink',formData).then((response)=>{
+        if(response.data.success){
+          this.resetSuccessMsg=response.data.message;
+          $timeout(()=>{
+            $state.go('login');
+          },4000);
+        }else {
+          this.resetErrorMsg=response.data.message;
+          console.log('error',response.data.message);
+          // $timeout(()=>{
+          //   $state.go('resendLink');
+          // },4000);
+        }
+      });
+    };
+
+    this.resetPassword=(formData)=>{
+      this.resetPasswordSuccessMsg=false;
+      this.resetPasswordErrorMsg=false;
+      console.log(formData.pswd);
+
+      if(formData.pswd==formData.cpswd){
+
+      $http.get('/resetPassword/'+$stateParams.token).then((response)=>{
+
+          if(response.data.success){
+            var details={
+              userid:response.data.userid,
+              password:formData.pswd
+            };
+            $http.post('/resetPassword',details).then((response)=>{
+              if(response.data.success){
+                this.resetPasswordSuccessMsg=response.data.message;
+                $timeout(()=>{
+                  $state.go('login');
+                },4000);
+              }else{
+                this.resetPasswordErrorMsg=response.data.message;
+              }
+            });
+
+          }else {
+            this.resetPasswordErrorMsg=response.data.message;
+            console.log('error',response.data.message);
+            // $timeout(()=>{
+            //   $state.go('resendLink');
+            // },4000);
+          }
+        });
+      }else{
+        this.resetPasswordErrorMsg="Passwords did'nt matched!";
+      }
+    }
 
 });
 
 
-// app.controller('likeCtrl', ['$scope', function($scope) {
-//     $scope.like = {};
-//     $scope.like.votes = 0;
-//     $scope.doVote = function() {
-//       console.log("reached in like!");
-//       if ($scope.like.userVotes == 1) {
-//         delete $scope.like.userVotes;
-//         $scope.like.votes--;
-//       } else {
-//         $scope.like.userVotes = 1;
-//         $scope.like.votes++;
-//       }
-//     }
-//   }]);
-
-// app.controller("likeCtrl",function($scope){
-//   $scope.dislike = false;
-//   $scope.btnclass = "";
-//
-//   $scope.getlike=function(){
-//
-//     if($scope.dislike==false){
-//       $scope.likes += 1;
-//       $scope.dislike = true;
-//       $scope.btnclass = "btn-primary";
-//     }
-//     else{
-//       $scope.likes -= 1;
-//       $scope.dislike = false;
-//       $scope.btnclass = "";
-//     }
-//   }
-// });
 
 
 app.controller('ProfileController',function ($http,authService) {
@@ -171,9 +232,10 @@ app.controller('ProfileController',function ($http,authService) {
 // });
 
 app.controller('SignupController',function($state,$http,$timeout){
-  // console.log("reachedhere");
+
+  this.errorMsg=false;
+  this.successMsg=false;
   this.doSignup = (formData) =>{
-   this.errorMsg=false;
 
     var formData={
       email:formData.email,
@@ -328,7 +390,6 @@ app.controller('MealController',function($http, valueService){
       };
 });
 
-
 app.controller('uploadedRecipesCtrl',function($http,authService){
   authService.getUser().then((response) => {
     this.userid = response.data.email;
@@ -366,16 +427,7 @@ app.controller('RecipeController',function($http, valueService){
   $http.get('/recipes').then((response)=>{
     this.recipes = response.data;
   });
-  // this.recipes = recipes
 
-  // this.searchByName=(keyword)=>{
-  //   console.log("Button clicked");
-  //   this.keyword=keyword;
-  //   console.log(this.keyword);
-  //   this.selectedRecipe=this.recipes;
-  //   console.log(this.selectedRecipe);
-  //   return this.selectedRecipe;
-  // };
 
   this.searchRecipe = (keyword=undefined) => {
 
@@ -466,11 +518,8 @@ app.controller('RecipeController',function($http, valueService){
         };//end loop3
       };//end loop2
     };//end loop1
-
     return selectedRecipe;
   }
-
-
 });
 
 
@@ -533,8 +582,6 @@ this.uploadData = (form,userid) => {
     taste: form.taste,
     uploader : userid,
     other_ingre:form.other_ingre,
-    likes: 0
-
   };
 
   console.log(formData);
